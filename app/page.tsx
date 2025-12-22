@@ -136,12 +136,22 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen font-sans">
       {/* Header */}
-      <header className="bg-background border-b border-border fixed w-full z-50 backdrop-blur-sm bg-background/95">
+      <header className="bg-background border-b border-border fixed w-full z-50 backdrop-blur-sm bg-background/100">
         <div className="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
-          <h1 className="flex items-center justify-center text-l md:text-2xl font-bold text-foreground gap-2">
-            <Image src="/logo.jpg" alt="SMS IT Solutions Logo" width={50} height={50} />
-            SMS IT Solutions
-          </h1>
+
+          <Link
+            href="https://hdcs.com.au/"
+            className="flex items-center gap-2 font-bold text-l sm:text-2xl bg-gradient-to-r from-primary via-chart-1 to-chart-2 bg-clip-text text-transparent"
+          >
+            <Image
+              src="/logo.jpeg"
+              alt="SMS IT Solutions Logo"
+              width={120}
+              height={20}
+            />
+            HDCS
+          </Link>
+
           <nav className="hidden md:flex space-x-8">
             <a href="#features" className="text-muted-foreground hover:text-foreground transition-colors">
               Features
@@ -539,16 +549,14 @@ export default function Home() {
       <footer className="bg-card border-t border-border py-8">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <div className="text-muted-foreground">
-              &copy; {new Date().getFullYear()} SMS IT Solutions. All rights reserved.
-            </div>
             <Link
               href="https://smsitsolutions.com.au/"
-              className="text-muted-foreground hover:text-primary transition-colors"
               target="_blank"
-              rel="noopener noreferrer"
+              className="text-muted-foreground flex items-center gap-2 hover:text-foreground transition-colors"
             >
-              Visit our website
+              <Image src="/logo.jpg" alt="SMS IT Solutions Logo" width={40} height={40} />
+
+              &copy; {new Date().getFullYear()} SMS IT Solutions. All rights reserved.
             </Link>
           </div>
         </div>

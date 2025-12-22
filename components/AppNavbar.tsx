@@ -2,16 +2,23 @@
 
 import Link from "next/link"
 import { ClipboardList, FileText, Plus } from "lucide-react"
+import Image from "next/image"
 
 export default function AppNavbar() {
     return (
         <nav className="sticky top-0 z-50 bg-card/80 backdrop-blur-xl border-b border-border shadow-sm">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
                 <Link
-                    href="/"
-                    className="font-bold text-l sm:text-2xl bg-gradient-to-r from-primary via-chart-1 to-chart-2 bg-clip-text text-transparent"
+                    href="https://hdcs.com.au/"
+                    className="flex items-center gap-2 font-bold text-l sm:text-2xl bg-gradient-to-r from-primary via-chart-1 to-chart-2 bg-clip-text text-transparent"
                 >
-                    SMS IT Solutions CRM
+                    <Image
+                        src="/logo.jpeg"
+                        alt="SMS IT Solutions Logo"
+                        width={120}
+                        height={20}
+                    />
+                    HDCS
                 </Link>
 
                 <div className="flex items-center gap-3 sm:gap-6">
