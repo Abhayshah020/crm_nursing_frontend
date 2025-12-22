@@ -27,6 +27,7 @@ export default function CreateDailyNotePage() {
             if (res.status === 201 || res.status === 200) {
                 alert("Daily note created")
                 setFormData({ clientName: "", date: "", notes: "" })
+                window.location.href = "/daily-notes"
             } else {
                 alert("Error creating daily note")
             }
