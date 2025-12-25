@@ -8,7 +8,7 @@ export function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // Allow static media files (videos, images, fonts)
+  // Allow static files
   if (
     pathname.match(
       /\.(mp4|webm|ogg|mp3|wav|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf)$/
@@ -20,16 +20,9 @@ export function middleware(req: NextRequest) {
   const token = req.cookies.get("accessToken")?.value;
 
   if (!token) {
-    return NextResponse.redirect(
-      new URL("/login", req.url)
-    );
+    // Use absolute URL for production
+    return NextResponse.redirect("/login");
   }
 
   return NextResponse.next();
 }
-
-export const config = {
-  matcher: [
-    "/((?!api|_next/static|_next/image|favicon.ico).*)",
-  ],
-};
