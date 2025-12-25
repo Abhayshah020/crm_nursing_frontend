@@ -9,19 +9,15 @@ export function middleware(req: NextRequest) {
   }
 
   // Allow static files
-  if (
-    pathname.match(
-      /\.(mp4|webm|ogg|mp3|wav|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf)$/
-    )
-  ) {
+  if (pathname.match(/\.(mp4|webm|ogg|mp3|wav|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf)$/)) {
     return NextResponse.next();
   }
 
   const token = req.cookies.get("accessToken")?.value;
 
   if (!token) {
-    // Use absolute URL for production
-    return NextResponse.redirect("/login");
+    // Full URL redirect
+    return NextResponse.redirect("https://crmnursing.smsitsolutions.com.au/login");
   }
 
   return NextResponse.next();
