@@ -7,6 +7,8 @@ import PageContainer from "@/components/PageContainer"
 import Footer from "@/components/Footer"
 import Link from "next/link"
 import { Eye, Trash2, ChevronLeft, ChevronRight, Plus } from "lucide-react"
+import { NavBarOfInternalPage } from "@/components/NavBarOfInternalPage"
+import axiosClient from "@/lib/axiosClient"
 
 export default function DailyNotesTablePage() {
     const [notes, setNotes] = useState<any[]>([])
@@ -14,18 +16,19 @@ export default function DailyNotesTablePage() {
 
     const handleFetch = async () => {
         try {
-            const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/daily-notes`, {
+            const res = await axiosClient.get("/daily-notes", {
                 params: { page, limit: 10 },
-            })
+            });
             if (res.status === 200 || res.status === 201) {
-                setNotes(res.data)
+                setNotes(res.data);
             } else {
-                alert("Error fetching daily notes")
+                alert("Error fetching daily notes");
             }
         } catch (error) {
-            alert("Error fetching daily notes")
+            alert("Error fetching daily notes");
         }
-    }
+    };
+
 
     useEffect(() => {
         handleFetch()
@@ -43,8 +46,9 @@ export default function DailyNotesTablePage() {
 
     return (
         <div className="flex flex-col min-h-screen">
-            <AppNavbar />
-            <PageContainer title="Daily Notes" subtitle="Manage and review all care documentation">
+            <NavBarOfInternalPage linkCreate="/daily-notes/create" title="Daily Notes" subtitle="Manage and review all daily notes" />
+
+            <PageContainer title="Daily Notes" subtitle="Manage and review documentation">
 
                 <div className="overflow-x-auto bg-card rounded-2xl shadow-lg border border-border hover:shadow-xl transition-shadow">
 
@@ -62,7 +66,7 @@ export default function DailyNotesTablePage() {
                             {notes.map((note) => (
                                 <tr key={note.id} className="border-b border-border hover:bg-muted/30 transition-colors">
                                     <td className="p-4 font-medium text-foreground">{note.clientName}</td>
-                                    <td className="p-4 text-center text-muted-foreground">{note.date}</td>
+                                    <td className="p-4 text-center text-muted-foreground">{note.timeStamps}</td>
                                     <td className="p-4 text-muted-foreground">{note.notes.slice(0, 40)}...</td>
                                     <td className="p-4 text-center text-muted-foreground">
                                         {new Date(note.createdAt).toLocaleDateString()}
@@ -75,12 +79,12 @@ export default function DailyNotesTablePage() {
                                             >
                                                 <Eye size={18} />
                                             </Link>
-                                            <button
+                                            {/* <button
                                                 onClick={() => handleDelete(note.id)}
                                                 className="text-destructive hover:text-destructive/80 transition-colors p-2 hover:bg-destructive/10 rounded-lg"
                                             >
                                                 <Trash2 size={18} />
-                                            </button>
+                                            </button> */}
                                         </div>
                                     </td>
                                 </tr>

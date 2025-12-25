@@ -2,19 +2,61 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import axios from "axios"
 import AppNavbar from "@/components/AppNavbar"
 import PageContainer from "@/components/PageContainer"
 import Footer from "@/components/Footer"
 import { Save, Sparkles } from "lucide-react"
+import { NavBarOfInternalPage } from "@/components/NavBarOfInternalPage"
+import axiosClient from "@/lib/axiosClient"
 
 export default function CreateDailyNotePage() {
+    const formattedDate = useMemo(() => {
+        const currentDate = new Date();
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth() + 1;
+        const dayOfMonth = currentDate.getDate();
+        const dayOfWeek = currentDate.getDay();
+        const hours = currentDate.getHours();
+        const minutes = currentDate.getMinutes();
+        const seconds = currentDate.getSeconds();
+
+        const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        const dayName = days[dayOfWeek];
+
+        const offsetMinutes = currentDate.getTimezoneOffset();
+        const offsetHours = Math.floor(Math.abs(offsetMinutes) / 60);
+        const offsetMins = Math.abs(offsetMinutes) % 60;
+        const offsetSign = offsetMinutes > 0 ? '-' : '+';
+        const formattedOffset = `${offsetSign}${offsetHours.toString().padStart(2, '0')}:${offsetMins.toString().padStart(2, '0')}`;
+
+        const formattedDate = `${dayName}, ${month}/${dayOfMonth}/${year} ${hours}:${minutes}:${seconds} UTC${formattedOffset}`;
+
+        return formattedDate;
+    }, [])
+
     const [formData, setFormData] = useState({
         clientName: "",
-        date: "",
+        timeStamps: formattedDate || '',
         notes: "",
     })
+    const [patients, setPatients] = useState([]);
+
+    const fetchPatients = async () => {
+        try {
+            const res = await axiosClient.get("/patients");
+            if (res.status === 200) {
+                setPatients(res.data);
+            }
+        } catch (err) {
+            console.error("Error fetching patients:", err);
+        }
+    };
+
+    useEffect(() => {
+        fetchPatients();
+    }, []);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }))
@@ -22,50 +64,45 @@ export default function CreateDailyNotePage() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         try {
-            e.preventDefault()
-            const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/daily-notes`, formData)
+            e.preventDefault();
+            const res = await axiosClient.post("/daily-notes", formData);
             if (res.status === 201 || res.status === 200) {
-                alert("Daily note created")
-                setFormData({ clientName: "", date: "", notes: "" })
-                window.location.href = "/daily-notes"
+                alert("Daily note created");
+                setFormData({ clientName: "", timeStamps: "", notes: "" });
+                window.location.href = "/daily-notes";
             } else {
-                alert("Error creating daily note")
+                alert("Error creating daily note");
             }
         } catch (error) {
-            alert("Error creating daily note")
+            alert("Error creating daily note");
         }
-    }
+    };
+
 
     return (
         <div className="flex flex-col min-h-screen">
-            <AppNavbar />
+            <NavBarOfInternalPage dontShowCreate={true} title="Daily Notes" subtitle="Manage and review all daily notes" />
+
             <PageContainer title="Create Daily Note" subtitle="Document important care observations and activities">
                 <form
                     onSubmit={handleSubmit}
-                    className="bg-card rounded-2xl shadow-lg border border-border p-6 sm:p-8 space-y-6 max-w-2xl hover:shadow-xl transition-shadow"
+                    className="bg-card rounded-2xl shadow-lg border border-border p-6 sm:p-8 space-y-6 max-w-7xl hover:shadow-xl transition-shadow"
                 >
                     <div className="space-y-2">
                         <label className="block text-sm font-medium text-foreground">Client Name</label>
-                        <input
-                            name="clientName"
+                        <select
+                            id="clientName"
                             value={formData.clientName}
-                            onChange={handleChange}
-                            required
-                            placeholder="Enter client name"
+                            onChange={(e) => setFormData({ ...formData, clientName: e.target.value })}
                             className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
-                        />
-                    </div>
-
-                    <div className="space-y-2">
-                        <label className="block text-sm font-medium text-foreground">Date</label>
-                        <input
-                            type="date"
-                            name="date"
-                            value={formData.date}
-                            onChange={handleChange}
-                            required
-                            className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
-                        />
+                        >
+                            <option value="">Select a client</option>
+                            {patients.map((patient) => (
+                                <option key={patient.id} value={patient.name}>
+                                    {patient.name}
+                                </option>
+                            ))}
+                        </select>
                     </div>
 
                     <div className="space-y-2">
@@ -78,6 +115,19 @@ export default function CreateDailyNotePage() {
                             required
                             placeholder="Enter detailed care notes..."
                             className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all resize-none"
+                        />
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="block text-sm font-medium text-foreground">Time Stamps</label>
+                        <input
+                            type="text"
+                            name="timeStamps"
+                            defaultValue={formData.timeStamps}
+                            // onChange={handleChange}
+                            readOnly
+                            required
+                            className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
                         />
                     </div>
 

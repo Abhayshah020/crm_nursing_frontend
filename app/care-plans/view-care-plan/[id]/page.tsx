@@ -25,6 +25,8 @@ import {
 } from "lucide-react"
 import AppNavbar from "@/components/AppNavbar"
 import Footer from "@/components/Footer"
+import { NavBarOfInternalPage } from "@/components/NavBarOfInternalPage"
+import axiosClient from "@/lib/axiosClient"
 
 interface ChronicDisease {
     id: number
@@ -257,14 +259,15 @@ export default function ViewCarePlanPage() {
 
     const fetchCarePlan = async () => {
         try {
-            const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/care-plans/${id}`)
-            setCarePlan(res.data)
+            const res = await axiosClient.get(`/care-plans/${id}`);
+            setCarePlan(res.data);
         } catch (err) {
-            console.error(err)
+            console.error(err);
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
-    }
+    };
+
 
     useEffect(() => {
         if (id) fetchCarePlan()
@@ -307,26 +310,14 @@ export default function ViewCarePlanPage() {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-background via-muted/30 to-background">
-            {/* Header */}
-            <AppNavbar />
-
+            <NavBarOfInternalPage dontShowCreate={true} title="Care Plans" subtitle="Manage and monitor patient care plans" />
 
             <div className="border-b border-border bg-card/50 backdrop-blur-sm z-10">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                            <Button onClick={() => router.back()} variant="ghost" size="icon" className="hover:bg-primary/10">
-                                <ArrowLeft className="w-5 h-5" />
-                            </Button>
-                            <div>
-                                <h1 className="text-3xl font-bold text-foreground text-balance">Care Plan Overview</h1>
-                                <p className="text-muted-foreground mt-1">Complete care plan details and assessments</p>
-                            </div>
-                        </div>
-                        <Badge className={getStatusColor(carePlan.status)} variant="outline">
-                            {carePlan.status}
-                        </Badge>
-                    </div>
+
+                    <Badge className={getStatusColor(carePlan.status)} variant="outline">
+                        Status: {carePlan.status}
+                    </Badge>
                 </div>
             </div>
 

@@ -166,9 +166,9 @@ export default function Home() {
               Contact
             </a>
           </nav>
-          <button className="bg-primary text-primary-foreground px-6 py-2 rounded-lg font-medium hover:opacity-90 transition-opacity">
+          <a href="/login" className="bg-primary text-primary-foreground px-6 py-2 rounded-lg font-medium hover:opacity-90 transition-opacity">
             Get Started
-          </button>
+          </a>
         </div>
       </header>
 
@@ -178,7 +178,7 @@ export default function Home() {
           autoPlay
           loop
           muted
-          className="absolute inset-0 w-full h-full object-cover brightness-20"
+          className="absolute inset-0 w-full h-full object-cover brightness-20 "
         >
           <source src="/backgroundvideocrm.mp4" type="video/mp4" />
           Your browser does not support the video tag.
@@ -193,9 +193,9 @@ export default function Home() {
               and client management with powerful analytics and seamless collaboration.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-primary text-primary-foreground px-8 py-4 rounded-lg text-lg font-semibold hover:opacity-90 transition-opacity">
+              <a href="#contact" className="bg-primary text-primary-foreground px-8 py-4 rounded-lg text-lg font-semibold hover:opacity-90 transition-opacity">
                 Contact Us
-              </button>
+              </a>
               {/* <button className="border-2 text-white border-border text-foreground px-8 py-4 rounded-lg text-lg font-semibold hover:bg-muted transition-colors">
                 Schedule Demo
               </button> */}
@@ -417,7 +417,9 @@ export default function Home() {
           <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
             <div className="bg-card border border-border p-8 rounded-2xl shadow-sm">
               <h4 className="text-xl font-bold mb-6 text-card-foreground">Task Completion Overview</h4>
-              <Bar data={barData} options={{ maintainAspectRatio: true, responsive: true }} />
+              <div className="flex flex-col items-center justify-center h-[100%]">
+                <Bar data={barData} options={{ maintainAspectRatio: true, responsive: true }} />
+              </div>
             </div>
             <div className="bg-card border border-border p-8 rounded-2xl shadow-sm">
               <h4 className="text-xl font-bold mb-6 text-card-foreground">Care Plan Status Distribution</h4>
