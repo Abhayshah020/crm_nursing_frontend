@@ -1,24 +1,28 @@
 import { NextRequest, NextResponse } from "next/server";
 
 export function middleware(req: NextRequest) {
-  const { pathname } = req.nextUrl;
+    const { pathname } = req.nextUrl;
 
-  // Public routes
-  if (pathname === "/" || pathname === "/login") {
+    // Allow public routes
+    if (pathname === "/" || pathname === "/login") {
+        return NextResponse.next();
+    }
+
+    // Read JWT from cookie
+    const token = req.cookies.get("accessToken")?.value;
+
+    // If no token, redirect
+    if (!token) {
+        return NextResponse.redirect(
+            new URL("/login", req.url)
+        );
+    }
+
     return NextResponse.next();
-  }
-
-  // Allow static files
-  if (pathname.match(/\.(mp4|webm|ogg|mp3|wav|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf)$/)) {
-    return NextResponse.next();
-  }
-
-  const token = req.cookies.get("accessToken")?.value;
-
-  if (!token) {
-    // Full URL redirect
-    return NextResponse.redirect("https://crmnursing.smsitsolutions.com.au/login");
-  }
-
-  return NextResponse.next();
 }
+
+export const config = {
+    matcher: [
+        "/((?!api|_next/static|_next/image|favicon.ico).*)",
+    ],
+};
