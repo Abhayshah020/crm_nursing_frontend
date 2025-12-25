@@ -3,12 +3,12 @@ import { NextRequest, NextResponse } from "next/server";
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // Public routes
+  // Public pages
   if (pathname === "/" || pathname === "/login") {
     return NextResponse.next();
   }
 
-  // Allow Next.js internal files
+  // Allow Next.js internals (CSS, JS, images, static files)
   if (pathname.startsWith("/_next/") || pathname.startsWith("/api/") || pathname === "/favicon.ico") {
     return NextResponse.next();
   }
@@ -16,11 +16,9 @@ export function middleware(req: NextRequest) {
   const token = req.cookies.get("accessToken")?.value;
 
   if (!token) {
-    // Absolute URL in production
+    // Redirect to login
     return NextResponse.redirect("https://crmnursing.smsitsolutions.com.au/login");
   }
 
   return NextResponse.next();
 }
-
-// No matcher in next.config.js. The middleware file itself is automatically applied.
