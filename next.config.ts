@@ -8,16 +8,6 @@ const nextConfig = {
       },
     ],
   },
-  matcher: [
-    /*
-      Match all routes except:
-      - api routes
-      - static files
-      - images
-      - favicon
-    */
-    "/((?!api|_next/static|_next/image|favicon.ico).*)",
-  ],
 };
 
 module.exports = nextConfig;

@@ -9,19 +9,18 @@ export function middleware(req: NextRequest) {
   }
 
   // Allow Next.js internal files
-  if (pathname.startsWith("/_next/") || pathname === "/favicon.ico") {
+  if (pathname.startsWith("/_next/") || pathname.startsWith("/api/") || pathname === "/favicon.ico") {
     return NextResponse.next();
   }
 
   const token = req.cookies.get("accessToken")?.value;
 
   if (!token) {
+    // Absolute URL in production
     return NextResponse.redirect("https://crmnursing.smsitsolutions.com.au/login");
   }
 
   return NextResponse.next();
 }
 
-export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
-};
+// No matcher in next.config.js. The middleware file itself is automatically applied.
