@@ -8,29 +8,29 @@ import { useRouter } from "next/router"
 import "./globals.css"
 import Cookies from "js-cookie";
 
-export const metadata: Metadata = {
-  title: "SMS IT Solutions - Nursing Care CRM Platform",
-  description:
-    "Transform your nursing care management with comprehensive CRM tools for care plans, daily notes, and client management. Improve efficiency and care quality.",
-  generator: "v0.app",
-  icons: {
-    icon: [
-      {
-        url: "/icon-light-32x32.png",
-        media: "(prefers-color-scheme: light)",
-      },
-      {
-        url: "/icon-dark-32x32.png",
-        media: "(prefers-color-scheme: dark)",
-      },
-      {
-        url: "/icon.svg",
-        type: "image/svg+xml",
-      },
-    ],
-    apple: "/apple-icon.png",
-  },
-}
+// export const metadata: Metadata = {
+//   title: "SMS IT Solutions - Nursing Care CRM Platform",
+//   description:
+//     "Transform your nursing care management with comprehensive CRM tools for care plans, daily notes, and client management. Improve efficiency and care quality.",
+//   generator: "v0.app",
+//   icons: {
+//     icon: [
+//       {
+//         url: "/icon-light-32x32.png",
+//         media: "(prefers-color-scheme: light)",
+//       },
+//       {
+//         url: "/icon-dark-32x32.png",
+//         media: "(prefers-color-scheme: dark)",
+//       },
+//       {
+//         url: "/icon.svg",
+//         type: "image/svg+xml",
+//       },
+//     ],
+//     apple: "/apple-icon.png",
+//   },
+// }
 
 export default function RootLayout({
   children,
