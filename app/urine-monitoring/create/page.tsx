@@ -53,13 +53,26 @@ const initialFormData = {
     },
     rnGpManagerNotified: false,
     comments: "",
-    staffName: JSON.parse(sessionStorage.getItem("user") || "{}")?.name || "Unknown Staff",
+    staffName: "Unknown Staff",
 };
-
 export default function UrineMonitoringForm() {
+
     const [formData, setFormData] = useState(initialFormData);
     const [patients, setPatients] = useState<any[]>([]);
 
+
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const user = sessionStorage.getItem("user");
+            if (user) {
+                const parsed = JSON.parse(user);
+                setFormData((prev) => ({
+                    ...prev,
+                    staffName: parsed?.name || "Unknown Staff",
+                }));
+            }
+        }
+    }, []);
     const fetchPatients = async () => {
         try {
             const res = await axiosClient.get("/patients");

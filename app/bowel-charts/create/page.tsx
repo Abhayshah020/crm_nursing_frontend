@@ -5,6 +5,7 @@ import PageContainer from "@/components/PageContainer";
 import axiosClient from "@/lib/axiosClient";
 import { NavBarOfInternalPage } from "@/components/NavBarOfInternalPage";
 import Footer from "@/components/Footer";
+export const dynamic = "force-dynamic"; // ✅ prevent prerender
 
 export default function BowelChartForm() {
     const [patients, setPatients] = useState<any[]>([]);
@@ -19,8 +20,21 @@ export default function BowelChartForm() {
         incompleteEmptying: false,
         unusualOdour: false,
         comments: "",
-        staffName: JSON.parse(sessionStorage.getItem("user") || "{}")?.name || "Unknown Staff",
+        staffName: "Unknown Staff",
     });
+
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const user = sessionStorage.getItem("user");
+            if (user) {
+                const parsed = JSON.parse(user);
+                setFormData((prev) => ({
+                    ...prev,
+                    staffName: parsed?.name || "Unknown Staff",
+                }));
+            }
+        }
+    }, []);
 
     useEffect(() => {
         const fetchPatients = async () => {

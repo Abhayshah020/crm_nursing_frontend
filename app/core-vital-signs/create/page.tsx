@@ -27,8 +27,21 @@ export default function CreateCoreVitalSignPage() {
         oxygenNote: "On Air",
         comments: "",
         staffId: 1,
-        staffName: "Admin",
-    })
+        staffName: "Unknown Staff",
+    });
+
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const user = sessionStorage.getItem("user");
+            if (user) {
+                const parsed = JSON.parse(user);
+                setForm((prev) => ({
+                    ...prev,
+                    staffName: parsed?.name || "Unknown Staff",
+                }));
+            }
+        }
+    }, []);
 
     useEffect(() => {
         fetchPatients()

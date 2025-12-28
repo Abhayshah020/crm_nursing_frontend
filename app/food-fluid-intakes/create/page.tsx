@@ -15,8 +15,21 @@ export default function CreateFoodFluidIntake() {
         totalFluid: "",
         fluidDetails: "",
         comments: "",
-        staffName: JSON.parse(sessionStorage.getItem("user") || "{}")?.name || "Unknown Staff",
+        staffName: "Unknown Staff",
     });
+
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const user = sessionStorage.getItem("user");
+            if (user) {
+                const parsed = JSON.parse(user);
+                setFormData((prev) => ({
+                    ...prev,
+                    staffName: parsed?.name || "Unknown Staff",
+                }));
+            }
+        }
+    }, []);
     const [patients, setPatients] = useState<any[]>([]);
 
     useEffect(() => {

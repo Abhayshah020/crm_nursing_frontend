@@ -17,8 +17,21 @@ export default function CreatePainComfortAssessmentPage() {
         actionTaken: "",
         comments: "",
         staffId: 1,
-        staffName: JSON.parse(sessionStorage.getItem("user") || "{}")?.name || "Unknown Staff",
-    })
+        staffName: "Unknown Staff",
+    });
+
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const user = sessionStorage.getItem("user");
+            if (user) {
+                const parsed = JSON.parse(user);
+                setForm((prev) => ({
+                    ...prev,
+                    staffName: parsed?.name || "Unknown Staff",
+                }));
+            }
+        }
+    }, []);
 
     const [patients, setPatients] = useState([]);
 
