@@ -1,10 +1,12 @@
-import type React from "react"
-import type { Metadata } from "next"
-import { Geist, Geist_Mono } from "next/font/google"
-import "./globals.css"
 
-const _geist = Geist({ subsets: ["latin"] })
-const _geistMono = Geist_Mono({ subsets: ["latin"] })
+"use client"
+
+import type React from "react"
+
+import type { Metadata } from "next"
+import { useRouter } from "next/router"
+import "./globals.css"
+import Cookies from "js-cookie";
 
 export const metadata: Metadata = {
   title: "SMS IT Solutions - Nursing Care CRM Platform",
@@ -35,6 +37,20 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const router = useRouter()
+
+  if (router.pathname !== "/" && router.pathname !== "/login") {
+    if (
+      !router.pathname.match(/\.(css|js|mp4|webm|ogg|mp3|wav|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf)$/)
+    ) {
+      const token = Cookies.get("accessToken")?.value;
+      if (!token) {
+        router.replace("/login");
+      }
+    }
+  }
+
+
   return (
     <html lang="en">
       <body className={`font-sans antialiased`}>
