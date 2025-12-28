@@ -8,10 +8,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const router = useRouter();
 
   useEffect(() => {
-    // Only run in the browser
     const path = window.location.pathname;
+
     if (path !== "/" && path !== "/login") {
-      const user = sessionStorage.get("user");
+      const user = sessionStorage.getItem("user"); // ✅ Correct
       if (!user) {
         router.replace("/login");
       }
