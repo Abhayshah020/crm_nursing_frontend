@@ -2,6 +2,7 @@ import type React from "react"
 import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
 import "./globals.css"
+import ProtectedPage from "@/components/ProtectedPage"
 
 export const metadata: Metadata = {
   title: "SMS IT Solutions - Nursing Care CRM Platform",
@@ -32,11 +33,13 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  
+
   return (
     <html lang="en">
       <body className={`font-sans antialiased`}>
-        {children}
+        <ProtectedPage>
+          {children}
+        </ProtectedPage>
       </body>
     </html>
   )
