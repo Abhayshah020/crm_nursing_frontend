@@ -44,7 +44,7 @@ export default function PatientsTablePage() {
 
     return (
         <div className="flex flex-col min-h-screen">
-            <NavBarOfInternalPage linkCreate="/patients/create" title="Patients" subtitle="Manage all patients" />
+            <NavBarOfInternalPage mainPage={true} linkCreate="/patients/create" title="Patients" subtitle="Manage all patients" />
 
             <PageContainer title="Patients" subtitle="List of all patients in the system">
                 <div className="overflow-x-auto bg-card rounded-2xl shadow-lg border border-border hover:shadow-xl transition-shadow">

@@ -1,24 +1,22 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import axios from "axios"
-import { useParams } from "next/navigation"
-import AppNavbar from "@/components/AppNavbar"
-import PageContainer from "@/components/PageContainer"
 import Footer from "@/components/Footer"
-import { Calendar, User, FileText, Clock } from "lucide-react"
 import { NavBarOfInternalPage } from "@/components/NavBarOfInternalPage"
+import PageContainer from "@/components/PageContainer"
 import axiosClient from "@/lib/axiosClient"
+import { Activity, AlertCircle, CheckCircle, Clock, FileText, MapPin, MessageSquare, User } from "lucide-react"
+import { useParams } from "next/navigation"
+import { useEffect, useState } from "react"
 
 export default function ViewDailyNotePage() {
     const { id } = useParams()
-    const [note, setNote] = useState<any>(null)
+    const [data, setData] = useState<any>(null)
 
     const handleFetch = async () => {
         try {
             const res = await axiosClient.get(`/daily-notes/${id}`);
             if (res.status === 200 || res.status === 201) {
-                setNote(res.data);
+                setData(res.data);
             } else {
                 alert("Error fetching daily note");
             }
@@ -32,7 +30,7 @@ export default function ViewDailyNotePage() {
         handleFetch()
     }, [id])
 
-    if (!note) return null
+    if (!data) return null
 
     return (
         <div className="flex flex-col min-h-screen">
@@ -44,32 +42,37 @@ export default function ViewDailyNotePage() {
                         <User className="text-primary mt-1" size={20} />
                         <div className="flex-1">
                             <p className="text-sm text-muted-foreground mb-1">Client</p>
-                            <p className="font-semibold text-lg text-foreground">{note.clientName}</p>
+                            <p className="font-semibold text-lg text-foreground">{data.clientName}</p>
                         </div>
                     </div>
-
-                    <div className="flex items-start gap-3 p-4 bg-muted/30 rounded-xl">
-                        <Calendar className="text-primary mt-1" size={20} />
-                        <div className="flex-1">
-                            <p className="text-sm text-muted-foreground mb-1">Date</p>
-                            <p className="font-medium text-foreground">{note.timeStamps}</p>
-                        </div>
-                    </div>
-
                     <div className="flex items-start gap-3 p-4 bg-muted/30 rounded-xl">
                         <FileText className="text-primary mt-1" size={20} />
                         <div className="flex-1">
                             <p className="text-sm text-muted-foreground mb-1">Notes</p>
-                            <p className="whitespace-pre-line text-foreground leading-relaxed">{note.notes}</p>
+                            <p className="whitespace-pre-line text-foreground leading-relaxed">{data.notes}</p>
                         </div>
                     </div>
-
+                    <div className="flex items-start gap-3 p-4 bg-muted/30 rounded-xl">
+                        <Clock className="text-primary mt-1" size={20} />
+                        <div className="flex-1">
+                            <p className="text-sm text-muted-foreground mb-1">Date</p>
+                            <p className="font-medium text-foreground">{data.timeStamps}</p>
+                        </div>
+                    </div>
+                    <div className="flex items-start gap-3 p-4 bg-muted/30 rounded-xl">
+                        <Clock className="text-primary mt-1" size={20} />
+                        <div className="flex-1">
+                            <p className="text-sm text-muted-foreground mb-1">Created By</p>
+                            <p className="font-medium text-foreground">{data.createdBy}</p>
+                        </div>
+                    </div>
                     <div className="flex items-center gap-2 text-sm text-muted-foreground pt-4 border-t border-border">
                         <Clock size={16} />
-                        <span>Created: {new Date(note.createdAt).toLocaleString()}</span>
+                        <span>Created: {new Date(data.createdAt).toLocaleString()}</span>
                     </div>
                 </div>
             </PageContainer>
+
             <Footer />
         </div>
     )

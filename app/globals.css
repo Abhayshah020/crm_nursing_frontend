@@ -126,3 +126,29 @@ html {
   }
 }
 
+.input {
+  @apply w-full bg-background border border-border rounded-xl px-4 py-3
+         text-foreground placeholder:text-muted-foreground
+         focus:ring-2 focus:ring-primary focus:border-transparent
+         transition-all outline-none;
+}
+
+.checkbox {
+  @apply h-4 w-4 rounded border-border text-primary focus:ring-primary;
+}
+
+.checkbox-label {
+  @apply inline-flex items-center gap-2 text-sm font-medium;
+}
+
+.section-card {
+  @apply bg-muted/30 rounded-2xl p-5 space-y-4;
+}
+
+.section-title {
+  @apply text-sm font-semibold uppercase tracking-wide text-foreground;
+}
+
+.badge {
+  @apply px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium;
+}

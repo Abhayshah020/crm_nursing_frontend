@@ -65,6 +65,7 @@ export default function CarePlansTablePage() {
     return (
         <div className="flex flex-col min-h-screen bg-slate-50">
             <NavBarOfInternalPage
+                mainPage={true}
                 linkCreate="/care-plans/create"
                 title="Care Plans"
                 subtitle="Manage and monitor patient care plans"

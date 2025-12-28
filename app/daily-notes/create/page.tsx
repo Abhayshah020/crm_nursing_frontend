@@ -2,14 +2,12 @@
 
 import type React from "react"
 
-import { useEffect, useMemo, useState } from "react"
-import axios from "axios"
-import AppNavbar from "@/components/AppNavbar"
-import PageContainer from "@/components/PageContainer"
 import Footer from "@/components/Footer"
-import { Save, Sparkles } from "lucide-react"
 import { NavBarOfInternalPage } from "@/components/NavBarOfInternalPage"
+import PageContainer from "@/components/PageContainer"
 import axiosClient from "@/lib/axiosClient"
+import { Save, Sparkles } from "lucide-react"
+import { useEffect, useMemo, useState } from "react"
 
 export default function CreateDailyNotePage() {
     const formattedDate = useMemo(() => {

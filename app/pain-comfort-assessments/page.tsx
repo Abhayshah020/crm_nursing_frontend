@@ -1,78 +1,81 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import axios from "axios"
+import axiosClient from "@/lib/axiosClient"
 import PageContainer from "@/components/PageContainer"
 import Footer from "@/components/Footer"
-import Link from "next/link"
-import { Eye, Trash2, ChevronLeft, ChevronRight, Plus } from "lucide-react"
 import { NavBarOfInternalPage } from "@/components/NavBarOfInternalPage"
-import axiosClient from "@/lib/axiosClient"
+import Link from "next/link"
+import { ChevronLeft, ChevronRight, Eye } from "lucide-react"
 
-export default function DailyNotesTablePage() {
-    const [notes, setNotes] = useState<any[]>([])
+export default function PainComfortAssessmentListPage() {
+    const [assessments, setAssessments] = useState<any[]>([])
     const [page, setPage] = useState(1)
 
-    const handleFetch = async () => {
-        try {
-            const res = await axiosClient.get("/daily-notes", {
-                params: { page, limit: 10 },
-            });
-            if (res.status === 200 || res.status === 201) {
-                setNotes(res.data);
-            } else {
-                alert("Error fetching daily notes");
-            }
-        } catch (error) {
-            alert("Error fetching daily notes");
-        }
-    };
-
     useEffect(() => {
-        handleFetch()
-    }, [page])
+        fetchData()
+    }, [])
+
+    const fetchData = async () => {
+        const res = await axiosClient.get("/pain-comfort-assessments")
+        setAssessments(res.data.data)
+    }
 
     return (
         <div className="flex flex-col min-h-screen">
-            <NavBarOfInternalPage mainPage={true} linkCreate="/daily-notes/create" title="Daily Notes" subtitle="Manage and review all daily notes" />
+            <NavBarOfInternalPage mainPage={true} title="Pain & Comfort Assessment" subtitle="All assessments" linkCreate="/pain-comfort-assessments/create" />
 
-            <PageContainer title="Daily Notes" subtitle="Manage and review documentation">
-
+            <PageContainer title="Assessments" subtitle="Pain & comfort records">
                 <div className="overflow-x-auto bg-card rounded-2xl shadow-lg border border-border hover:shadow-xl transition-shadow">
-
                     <table className="w-full text-sm">
                         <thead className="bg-muted/50 text-foreground border-b border-border">
                             <tr>
-                                <th className="p-4 text-left font-semibold">Client</th>
-                                <th className="p-4 font-semibold">Date</th>
-                                <th className="p-4 font-semibold">Notes</th>
-                                <th className="p-4 font-semibold">Created</th>
-                                <th className="p-4 font-semibold">Actions</th>
+                                <th className="p-4 text-left font-semibold">Patient</th>
+                                <th className="p-4 text-center font-semibold">Pain Score</th>
+                                <th className="p-4 font-semibold">Location</th>
+                                <th className="p-4 text-center font-semibold">Date</th>
+                                <th className="p-4 text-center font-semibold">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {notes.map((note) => (
-                                <tr key={note.id} className="border-b border-border hover:bg-muted/30 transition-colors">
-                                    <td className="p-4 font-medium text-foreground">{note.clientName}</td>
-                                    <td className="p-4 text-center text-muted-foreground">{note.timeStamps}</td>
-                                    <td className="p-4 text-muted-foreground">{note.notes.slice(0, 40)}...</td>
-                                    <td className="p-4 text-center text-muted-foreground">
-                                        {new Date(note.createdAt).toLocaleDateString()}
+                            {assessments.map((a) => (
+                                <tr
+                                    key={a.id}
+                                    className="border-b border-border hover:bg-muted/30 transition-colors"
+                                >
+                                    <td className="p-4 font-medium text-foreground">
+                                        {a.patientName}
                                     </td>
+
+                                    <td className="p-4 text-center text-muted-foreground">
+                                        {a.painScore}/10
+                                    </td>
+
+                                    <td className="p-4 text-muted-foreground">
+                                        {a.painLocation}
+                                    </td>
+
+                                    <td className="p-4 text-center text-muted-foreground">
+                                        {new Date(a.timestamp).toLocaleDateString()}
+                                    </td>
+
                                     <td className="p-4">
                                         <div className="flex gap-3 justify-center">
                                             <Link
-                                                href={`/daily-notes/view/${note.id}`}
+                                                href={`/pain-comfort-assessments/view/${a.id}`}
                                                 className="text-primary hover:text-primary/80 transition-colors p-2 hover:bg-primary/10 rounded-lg"
                                             >
                                                 <Eye size={18} />
                                             </Link>
-                                            {/* <button
-                                                onClick={() => handleDelete(note.id)}
-                                                className="text-destructive hover:text-destructive/80 transition-colors p-2 hover:bg-destructive/10 rounded-lg"
-                                            >
-                                                <Trash2 size={18} />
-                                            </button> */}
+
+                                            {/*
+                            <button
+                                onClick={() => handleDelete(a.id)}
+                                className="text-destructive hover:text-destructive/80 transition-colors p-2 hover:bg-destructive/10 rounded-lg"
+                            >
+                                <Trash2 size={18} />
+                            </button>
+                            */}
                                         </div>
                                     </td>
                                 </tr>
@@ -99,7 +102,9 @@ export default function DailyNotesTablePage() {
                         <ChevronRight size={16} />
                     </button>
                 </div>
+
             </PageContainer>
+
             <Footer />
         </div>
     )
