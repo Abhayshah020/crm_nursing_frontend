@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useEffect } from "react";
-import Cookies from "js-cookie";
 import { useRouter } from "next/navigation"; // App Router
+import React, { useEffect } from "react";
 import "./globals.css";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -12,8 +11,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     // Only run in the browser
     const path = window.location.pathname;
     if (path !== "/" && path !== "/login") {
-      const token = Cookies.get("accessToken");
-      if (!token) {
+      const user = sessionStorage.get("user");
+      if (!user) {
         router.replace("/login");
       }
     }
