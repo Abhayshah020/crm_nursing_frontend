@@ -1,17 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { useParams } from "next/navigation";
 import PageContainer from "@/components/PageContainer";
 import Footer from "@/components/Footer";
 import { NavBarOfInternalPage } from "@/components/NavBarOfInternalPage";
 import { Calendar, Clock, Home, Mail, Phone, User } from "lucide-react";
 import axiosClient from "@/lib/axiosClient";
+import Image from "next/image";
 
 export default function ViewPatientPage() {
     const { id } = useParams();
-    const [patient, setPatient] = useState(null);
+    const [patient, setPatient] = useState<any>(null);
 
     const handleFetch = async () => {
         try {
@@ -26,7 +26,6 @@ export default function ViewPatientPage() {
         }
     };
 
-
     useEffect(() => {
         handleFetch();
     }, [id]);
@@ -40,6 +39,17 @@ export default function ViewPatientPage() {
             <PageContainer title="Patient Information" subtitle="Details about the patient">
                 <div className="bg-card rounded-2xl shadow-lg border border-border p-6 sm:p-8 max-w-7xl space-y-6 hover:shadow-xl transition-shadow">
 
+                    {/* Patient Photo */}
+                    {patient.image && (
+
+                        <div className="flex justify-center mb-4">
+                            <img
+                                src={`${process.env.NEXT_PUBLIC_IMAGE_URL}${patient.image}`}
+                                alt={patient.name}
+                                className="w-32 h-32 object-cover rounded-full border"
+                            />
+                        </div>
+                    )}
                     {/* Name */}
                     <div className="flex items-start gap-3 p-4 bg-muted/30 rounded-xl">
                         <User className="text-primary mt-1" size={20} />
@@ -92,8 +102,8 @@ export default function ViewPatientPage() {
                     </div>
 
                 </div>
-
             </PageContainer>
+
             <Footer />
         </div>
     );

@@ -57,18 +57,11 @@ export default function UrineMonitoringTable() {
                             <tr className="bg-muted/50 text-left">
                                 <th className="px-4 py-2 border-b">Patient</th>
                                 <th className="px-4 py-2 border-b">Staff</th>
-                                <th className="px-4 py-2 border-b">Timestamp</th>
-                                <th className="px-4 py-2 border-b">Reason</th>
                                 <th className="px-4 py-2 border-b">Colour</th>
-                                <th className="px-4 py-2 border-b">Clarity</th>
-                                <th className="px-4 py-2 border-b">Dysuria</th>
                                 <th className="px-4 py-2 border-b">Frequency</th>
                                 <th className="px-4 py-2 border-b">Fluid Intake (ml)</th>
                                 <th className="px-4 py-2 border-b">Urine Output (ml)</th>
-                                <th className="px-4 py-2 border-b">Balance</th>
-                                <th className="px-4 py-2 border-b">Continence</th>
-                                <th className="px-4 py-2 border-b">Catheter</th>
-                                <th className="px-4 py-2 border-b">RN/GP Notified</th>
+                                <th className="px-4 py-2 border-b">Timestamp</th>
                                 <th className="px-4 py-2 border-b">Actions</th>
                             </tr>
                         </thead>
@@ -77,23 +70,11 @@ export default function UrineMonitoringTable() {
                                 <tr key={r.id} className="hover:bg-muted/10">
                                     <td className="px-4 py-2 border-b">{r.patientName}</td>
                                     <td className="px-4 py-2 border-b">{r.staffName}</td>
-                                    <td className="px-4 py-2 border-b">{new Date(r.timestamp).toLocaleString()}</td>
-                                    <td className="px-4 py-2 border-b">
-                                        {Object.entries(r.reasonForCharting)
-                                            .filter(([_, v]) => v)
-                                            .map(([k]) => k)
-                                            .join(", ") || "N/A"}
-                                    </td>
                                     <td className="px-4 py-2 border-b">{r.colour || "N/A"}</td>
-                                    <td className="px-4 py-2 border-b">{r.clarity || "N/A"}</td>
-                                    <td className="px-4 py-2 border-b">{r.dysuria ? "Yes" : "No"}</td>
                                     <td className="px-4 py-2 border-b">{r.frequency || "N/A"}</td>
                                     <td className="px-4 py-2 border-b">{r.totalFluidIntake ?? 0}</td>
                                     <td className="px-4 py-2 border-b">{r.totalUrineOutput ?? 0}</td>
-                                    <td className="px-4 py-2 border-b">{r.balance || "N/A"}</td>
-                                    <td className="px-4 py-2 border-b">{r.continenceStatus || "N/A"}</td>
-                                    <td className="px-4 py-2 border-b">{r.catheterType || "N/A"}</td>
-                                    <td className="px-4 py-2 border-b">{r.rnGpManagerNotified ? "Yes" : "No"}</td>
+                                    <td className="px-4 py-2 border-b">{new Date(r.timestamp).toLocaleString()}</td>
                                     {/* <td className="px-4 py-2 border-b">
                                         <Link href={`/urine-monitoring/view/${r.id}`} className="text-primary hover:underline mr-2">
                                             View

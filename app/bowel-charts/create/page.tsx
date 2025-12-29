@@ -13,7 +13,8 @@ export default function BowelChartForm() {
         patientId: "",
         patientName: "",
         bowelMotion: false,
-        bristolType: "",
+        bristolType: "Separate hard lumps (severe constipation)",
+        bristolAmount: "Small",
         straining: false,
         painDiscomfort: false,
         bloodMucusPresent: false,
@@ -66,7 +67,8 @@ export default function BowelChartForm() {
                     patientId: "",
                     patientName: "",
                     bowelMotion: false,
-                    bristolType: "",
+                    bristolType: "Separate hard lumps (severe constipation)",
+                    bristolAmount: "Small",
                     straining: false,
                     painDiscomfort: false,
                     bloodMucusPresent: false,
@@ -120,6 +122,19 @@ export default function BowelChartForm() {
                             <input type="checkbox" name="bowelMotion" checked={formData.bowelMotion} onChange={handleChange} />
                             Bowel Motion (Y/N)
                         </label>
+
+                        <select
+                            name="bristolAmount"
+                            value={formData.bristolAmount}
+                            onChange={handleChange}
+                            className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:ring-2 focus:ring-primary outline-none"
+                            required
+                        >
+                            <option value="">Bristol Amount</option>
+                            <option value="Small">Small</option>
+                            <option value="Medium">Medium</option>
+                            <option value="Large">Large</option>
+                        </select>
 
                         <select
                             name="bristolType"

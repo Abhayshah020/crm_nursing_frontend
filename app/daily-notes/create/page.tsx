@@ -20,6 +20,7 @@ export default function CreateDailyNotePage() {
         const minutes = currentDate.getMinutes();
         const seconds = currentDate.getSeconds();
 
+
         const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
         const dayName = days[dayOfWeek];
 
@@ -34,8 +35,21 @@ export default function CreateDailyNotePage() {
         return formattedDate;
     }, [])
 
+    const [patientImage, setPatientImage] = useState<File | null>(null);
+    const [imagePreview, setImagePreview] = useState<string | null>(null);
+
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        setPatientImage(file);
+        setImagePreview(URL.createObjectURL(file));
+    };
+
+
     const [formData, setFormData] = useState({
         clientName: "",
+        date: "",
         timeStamps: formattedDate || '',
         notes: "",
     })
@@ -66,7 +80,7 @@ export default function CreateDailyNotePage() {
             const res = await axiosClient.post("/daily-notes", formData);
             if (res.status === 201 || res.status === 200) {
                 alert("Daily note created");
-                setFormData({ clientName: "", timeStamps: "", notes: "" });
+                setFormData({ clientName: "", timeStamps: "", notes: "", date: "" });
                 window.location.href = "/daily-notes";
             } else {
                 alert("Error creating daily note");
@@ -113,6 +127,18 @@ export default function CreateDailyNotePage() {
                             required
                             placeholder="Enter detailed care notes..."
                             className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all resize-none"
+                        />
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="block text-sm font-medium text-foreground">Date</label>
+                        <input
+                            type="date"
+                            name="date"
+                            defaultValue={formData.date}
+                            onChange={handleChange}
+                            required
+                            className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
                         />
                     </div>
 
