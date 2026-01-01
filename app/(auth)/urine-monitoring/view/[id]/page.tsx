@@ -46,7 +46,7 @@ export default function UrineMonitoringView() {
         try {
             const res = await axiosClient.get(`/urine-monitoring/${id}`);
             if (res.status === 200) {
-                setRecord(res.data.data);
+                setRecord(res.data);
             }
         } catch (err) {
             console.error("Error fetching record:", err);
@@ -63,13 +63,11 @@ export default function UrineMonitoringView() {
 
             <NavBarOfInternalPage dontShowCreate={true} title="New Neurological Observation" subtitle="Manage and review" />
 
-            <PageContainer title="Urine Monitoring Details" subtitle={`Patient: ${record.patientName}`}>
-                <div className="bg-card rounded-3xl border border-border shadow-lg hover:shadow-xl transition-all
-                p-6 sm:p-8 max-w-5xl mx-auto space-y-8">
+            <PageContainer title="Urine Monitoring Details" subtitle={``}>
+                <div className="bg-card rounded-3xl border border-border shadow-lg hover:shadow-xl transition-all p-6 sm:p-8 space-y-8">
 
                     {/* ================= Header ================= */}
-                    <div className="flex flex-wrap items-center justify-between gap-4
-                    bg-muted/30 rounded-2xl p-5">
+                    <div className="flex flex-wrap items-center justify-between gap-4 bg-muted/30 rounded-2xl p-5">
                         <div className="space-y-1">
                             <p className="text-xs uppercase tracking-wide text-muted-foreground">
                                 Patient

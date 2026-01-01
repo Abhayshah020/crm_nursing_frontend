@@ -2,6 +2,7 @@
 
 import { NavBarOfInternalPage } from "@/components/NavBarOfInternalPage";
 import PageContainer from "@/components/PageContainer";
+import { useToast } from "@/components/toast/ToastContext";
 import axiosClient from "@/lib/axiosClient";
 import { ChevronLeft, ChevronRight, Eye } from "lucide-react";
 import Link from "next/link";
@@ -13,6 +14,7 @@ export default function BowelChartTable() {
     const [itemsPerPage, setItemsPerPage] = useState(5);
     const [totalPages, setTotalPages] = useState(1);
     const [filter, setFilter] = useState("");
+    const { showToast } = useToast();
 
     const handlePrevPage = () => {
         if (currentPage > 1) setCurrentPage(currentPage - 1);
@@ -28,7 +30,10 @@ export default function BowelChartTable() {
                 const res = await axiosClient.get("/bowel-charts");
                 setRecords(res.data.data);
             } catch (err) {
-                console.error("Error fetching bowel charts:", err);
+                showToast({
+                    message: "Error creating bowel chart",
+                    type: "error",
+                });
             }
         };
         fetchRecords();

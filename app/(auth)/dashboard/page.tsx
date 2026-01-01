@@ -1,6 +1,6 @@
 "use client";
 
-import PageContainer from "@/components/PageContainer";
+import { useToast } from "@/components/toast/ToastContext";
 import axiosClient from "@/lib/axiosClient";
 import { ChevronLeft, ChevronRight, Eye } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -12,6 +12,7 @@ export default function DashboardPage() {
     const [itemsPerPage, setItemsPerPage] = useState(5);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const { showToast } = useToast();
 
     const handlePrevPage = () => {
         if (currentPage > 1) setCurrentPage(currentPage - 1);
@@ -29,7 +30,10 @@ export default function DashboardPage() {
                 setRecords(res.data.data);
                 setTotalPages(res.data.total);
             } catch (error) {
-                alert("Error fetching patients");
+                showToast({
+                    message: "Something went wrong!",
+                    type: "error",
+                });
             }
         };
         handleFetch();
@@ -51,13 +55,15 @@ export default function DashboardPage() {
                         className="bg-white rounded-2xl shadow-md p-4 flex flex-col gap-4"
                     >
                         <div className="flex items-center gap-4">
-                            <div className="w-16 h-16 rounded-full overflow-hidden border border-gray-200">
-                                <img
-                                    src={`${process.env.NEXT_PUBLIC_API_URL}${patient.image}`}
-                                    alt={patient.name}
-                                    className="w-full h-full object-cover"
-                                />
-                            </div>
+                            {patient.image && (
+                                <div className="w-16 h-16 rounded-full overflow-hidden border border-gray-200">
+                                    <img
+                                        src={`${process.env.NEXT_PUBLIC_API_URL}${patient.image}`}
+                                        alt={patient.name}
+                                        className="w-full h-full object-cover"
+                                    />
+                                </div>
+                            )}
                             <div>
                                 <p className="font-semibold text-lg">{patient.name}</p>
                                 <p className="text-sm text-gray-500">Age: {patient.age ?? "-"}</p>
@@ -80,7 +86,7 @@ export default function DashboardPage() {
                                 <button
                                     key={route}
                                     onClick={() =>
-                                        router.push(`/${route}/pateints-all-notes/${patient.id}`)
+                                        router.push(`/${route}/patients-all-notes/${patient.id}`)
                                     }
                                     className="bg-blue-500 text-white py-2 rounded-lg text-sm flex items-center justify-center gap-2 hover:brightness-110 transition"
                                 >
@@ -119,14 +125,18 @@ export default function DashboardPage() {
                                     className="border-b border-gray-200 hover:bg-gray-50 transition-colors"
                                 >
                                     <td className="p-4">
+
                                         <div className="flex items-center gap-3">
-                                            <div className="w-12 h-12 rounded-full overflow-hidden border border-gray-200 shrink-0">
-                                                <img
-                                                    src={`${process.env.NEXT_PUBLIC_API_URL}${patient.image}`}
-                                                    alt={patient.name}
-                                                    className="w-full h-full object-cover"
-                                                />
-                                            </div>
+                                            {patient.image && (
+                                                <div className="w-12 h-12 rounded-full overflow-hidden border border-gray-200 shrink-0">
+                                                    <img
+                                                        src={`${process.env.NEXT_PUBLIC_API_URL}${patient.image}`}
+                                                        alt={patient.name}
+                                                        className="w-full h-full object-cover"
+                                                    />
+                                                </div>
+                                            )}
+
                                             <span className="font-medium">{patient.name}</span>
                                         </div>
                                     </td>
@@ -146,7 +156,7 @@ export default function DashboardPage() {
                                         <td key={route} className="p-4 text-center">
                                             <button
                                                 onClick={() =>
-                                                    router.push(`/${route}/pateints-all-notes/${patient.id}`)
+                                                    router.push(`/${route}/patients-all-notes/${patient.id}`)
                                                 }
                                                 className="cursor-pointer bg-blue-500 text-white px-3 py-1.5 rounded-lg text-xs flex items-center gap-1 mx-auto hover:brightness-110 transition"
                                             >

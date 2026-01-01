@@ -3,14 +3,17 @@
 import Footer from "@/components/Footer"
 import { NavBarOfInternalPage } from "@/components/NavBarOfInternalPage"
 import PageContainer from "@/components/PageContainer"
+import { useToast } from "@/components/toast/ToastContext"
 import axiosClient from "@/lib/axiosClient"
 import { Activity, Clock, Droplet, FileText, Heart, Thermometer, User, Wind } from "lucide-react"
-import { useParams } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
 export default function ViewCoreVitalSignPage() {
     const params = useParams()
     const id = params.id as string
+    const router = useRouter();
+    const { showToast } = useToast();
 
     const [vital, setVital] = useState<any>(null)
 
@@ -21,9 +24,12 @@ export default function ViewCoreVitalSignPage() {
     const fetchVital = async () => {
         try {
             const res = await axiosClient.get(`/core-vital-signs/${id}`)
-            setVital(res.data.data)
+            setVital(res.data)
         } catch (error) {
-            console.error("Error fetching vital sign:", error)
+            showToast({
+                message: "Something went wrong!",
+                type: "error",
+            });
         }
     }
 
@@ -101,7 +107,7 @@ export default function ViewCoreVitalSignPage() {
 
                 </div>
             </PageContainer>
-            
+
         </div>
     )
 }

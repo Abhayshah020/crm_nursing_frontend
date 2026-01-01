@@ -3,6 +3,7 @@
 import Footer from "@/components/Footer";
 import { NavBarOfInternalPage } from "@/components/NavBarOfInternalPage";
 import PageContainer from "@/components/PageContainer";
+import { useToast } from "@/components/toast/ToastContext";
 import { Info, Status } from "@/components/ViewInfoStatus";
 import axiosClient from "@/lib/axiosClient";
 import { User, Clock } from "lucide-react";
@@ -11,6 +12,7 @@ import { useEffect, useState } from "react";
 
 export default function BowelChartView() {
     const { id } = useParams<{ id: string }>();
+    const { showToast } = useToast();
 
     const [data, setData] = useState<any>(null);
 
@@ -20,7 +22,10 @@ export default function BowelChartView() {
                 const res = await axiosClient.get(`/bowel-charts/${id}`);
                 setData(res.data.data);
             } catch (err) {
-                console.error(err);
+                showToast({
+                    message: "Error creating bowel chart",
+                    type: "error",
+                });
             }
         };
         fetchData();
@@ -104,7 +109,7 @@ export default function BowelChartView() {
                 </div>
 
             </PageContainer>
-            
+
         </div>
     );
 }

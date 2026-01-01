@@ -2,11 +2,14 @@
 
 import { NavBarOfInternalPage } from "@/components/NavBarOfInternalPage";
 import PageContainer from "@/components/PageContainer";
+import { useToast } from "@/components/toast/ToastContext";
 import axiosClient from "@/lib/axiosClient";
 import { useEffect, useState } from "react";
 export const dynamic = "force-dynamic"; // ✅ prevent prerender
 
 export default function BowelChartForm() {
+    const { showToast } = useToast();
+
     const [patients, setPatients] = useState<any[]>([]);
     const [formData, setFormData] = useState({
         patientId: "",
@@ -20,7 +23,6 @@ export default function BowelChartForm() {
         incompleteEmptying: false,
         unusualOdour: false,
         comments: "",
-        staffName: "Unknown Staff",
     });
 
     useEffect(() => {
@@ -42,7 +44,10 @@ export default function BowelChartForm() {
                 const res = await axiosClient.get("/patients");
                 setPatients(res.data.data);
             } catch (err) {
-                console.error("Error fetching patients:", err);
+                showToast({
+                    message: "Error creating bowel chart",
+                    type: "error",
+                });
             }
         };
         fetchPatients();
@@ -59,9 +64,16 @@ export default function BowelChartForm() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const res = await axiosClient.post("/bowel-charts", formData);
+            if (formData.patientName === "") {
+                return alert("Please fill the name of the patient!")
+            }
+            const staffName = JSON.parse(sessionStorage.getItem("user")).name
+            const res = await axiosClient.post("/bowel-charts", { ...formData, staffName });
             if (res.status === 200 || res.status === 201) {
-                alert("Bowel chart created");
+                showToast({
+                    message: "Bowel charts was success!",
+                    type: "success",
+                });
                 setFormData({
                     patientId: "",
                     patientName: "",
@@ -74,12 +86,14 @@ export default function BowelChartForm() {
                     incompleteEmptying: false,
                     unusualOdour: false,
                     comments: "",
-                    staffName: "",
                 });
                 window.location.href = "/bowel-charts";
             }
         } catch (error) {
-            alert("Error creating bowel chart");
+            showToast({
+                message: "Error creating bowel chart",
+                type: "error",
+            });
         }
     };
 
@@ -91,7 +105,7 @@ export default function BowelChartForm() {
             <PageContainer title="New Bowel Chart" subtitle="Document bowel movements and observations">
                 <form
                     onSubmit={handleSubmit}
-                    className="bg-card rounded-2xl shadow-lg border p-6 space-y-6 max-w-4xl hover:shadow-xl transition-shadow"
+                    className="bg-card rounded-2xl shadow-lg border p-6 space-y-6 hover:shadow-xl transition-shadow"
                 >
                     <div className="space-y-2">
                         <label className="block text-sm font-medium text-foreground">Patient</label>
@@ -177,16 +191,6 @@ export default function BowelChartForm() {
                             <input type="checkbox" name="unusualOdour" checked={formData.unusualOdour} onChange={handleChange} />
                             Unusual Odour
                         </label>
-                        <input
-                            type="text"
-                            name="staffName"
-                            placeholder="Staff Name"
-                            value={formData.staffName}
-                            // onChange={handleChange}
-                            readOnly
-                            className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:ring-2 focus:ring-primary outline-none"
-                            required
-                        />
                     </div>
 
                     <div className="space-y-2">
@@ -208,7 +212,7 @@ export default function BowelChartForm() {
                     </button>
                 </form>
             </PageContainer>
-            
+
         </div>
     );
 }

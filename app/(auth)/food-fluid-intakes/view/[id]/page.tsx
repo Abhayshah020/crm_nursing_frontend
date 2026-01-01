@@ -6,19 +6,24 @@ import { Clock, User } from "lucide-react";
 import axiosClient from "@/lib/axiosClient";
 import { NavBarOfInternalPage } from "@/components/NavBarOfInternalPage";
 import Footer from "@/components/Footer";
+import { useToast } from "@/components/toast/ToastContext";
 
 export default function FoodFluidIntakeView() {
     const { id } = useParams();
     const [data, setData] = useState<any>(null);
+    const { showToast } = useToast();
 
     const fetchFoodFluidIntakeById = async (id) => {
         try {
             const res = await axiosClient.get(`/food-fluid-intakes/${id}`);
             if (res.status === 200) {
-                setData(res.data.data);
+                setData(res.data);
             }
         } catch (err) {
-            console.error(`Error fetching intake ${id}:`, err);
+            showToast({
+                message: "Something went wrong!",
+                type: "error",
+            });
         }
     };
 
@@ -78,7 +83,7 @@ export default function FoodFluidIntakeView() {
                     </div>
                 </div>
             </PageContainer>
-            
+
         </div>
     );
 }

@@ -3,6 +3,7 @@
 import Footer from "@/components/Footer"
 import { NavBarOfInternalPage } from "@/components/NavBarOfInternalPage"
 import PageContainer from "@/components/PageContainer"
+import { useToast } from "@/components/toast/ToastContext"
 import { InfoCard } from "@/components/ViewInfoStatus"
 import axiosClient from "@/lib/axiosClient"
 import {
@@ -21,6 +22,7 @@ import { useEffect, useState } from "react"
 export default function ViewPatientFullProfilePage() {
     const { id } = useParams()
     const [data, setData] = useState<any>(null)
+    const { showToast } = useToast();
 
     const fetchPatient = async () => {
         try {
@@ -29,7 +31,10 @@ export default function ViewPatientFullProfilePage() {
                 setData(res.data.data)
             }
         } catch (error) {
-            alert("Error fetching patient data")
+            showToast({
+                message: "Something went wrong!",
+                type: "error",
+            });
         }
     }
 
@@ -122,7 +127,7 @@ export default function ViewPatientFullProfilePage() {
                 </div>
             </PageContainer>
 
-            
+
         </div>
     )
 }

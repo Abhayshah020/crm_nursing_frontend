@@ -5,6 +5,8 @@ import axiosClient from "@/lib/axiosClient"
 import PageContainer from "@/components/PageContainer"
 import Footer from "@/components/Footer"
 import { NavBarOfInternalPage } from "@/components/NavBarOfInternalPage"
+import { useToast } from "@/components/toast/ToastContext"
+import { useRouter } from "next/navigation"
 
 export default function CreatePainComfortAssessmentPage() {
     const [form, setForm] = useState({
@@ -19,7 +21,8 @@ export default function CreatePainComfortAssessmentPage() {
         staffId: 1,
         staffName: "Unknown Staff",
     });
-
+    const { showToast } = useToast();
+    const router = useRouter()
     useEffect(() => {
         if (typeof window !== "undefined") {
             const user = sessionStorage.getItem("user");
@@ -63,8 +66,11 @@ export default function CreatePainComfortAssessmentPage() {
                 painScore: Number(form.painScore),
                 patientId: Number(form.patientId),
             })
-            alert("Pain & Comfort Assessment Created")
-            window.location.href = "/pain-comfort-assessments";
+            showToast({
+                message: "Pain & Comfort Assessment Created",
+                type: "success",
+            });
+            router.push("/pain-comfort-assessments");
         } catch (err) {
             console.error("Error fetching patients:", err);
         }
@@ -219,7 +225,7 @@ export default function CreatePainComfortAssessmentPage() {
             </PageContainer>
 
 
-            
+
         </div>
     )
 }

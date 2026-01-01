@@ -1,23 +1,25 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import PageContainer from "@/components/PageContainer";
-import axiosClient from "@/lib/axiosClient";
 import { NavBarOfInternalPage } from "@/components/NavBarOfInternalPage";
-import Footer from "@/components/Footer";
+import PageContainer from "@/components/PageContainer";
+import { useToast } from "@/components/toast/ToastContext";
+import axiosClient from "@/lib/axiosClient";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function CreateNeuroObservation() {
     const [patients, setPatients] = useState<any[]>([]);
     const [formData, setFormData] = useState({
         patientId: "",
         patientName: "",
-        levelOfConsciousness: "",
-        orientation: "",
-        speech: "",
-        pupils: "",
+        levelOfConsciousness: "Alert",
+        orientation: "Person",
+        speech: "Clear",
+        pupils: "Equal",
         comments: "",
     });
-
+    const { showToast } = useToast();
+    const router = useRouter()
     useEffect(() => {
         fetchPatients();
     }, []);
@@ -27,7 +29,10 @@ export default function CreateNeuroObservation() {
             const res = await axiosClient.get("/patients");
             if (res.status === 200) setPatients(res.data.data);
         } catch (err) {
-            console.error("Error fetching patients:", err);
+            showToast({
+                message: "Something went wrong!",
+                type: "error",
+            });
         }
     };
 
@@ -38,12 +43,25 @@ export default function CreateNeuroObservation() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
+            const {
+                patientId,
+                patientName,
+            } = formData;
+            if (
+                patientId === "" ||
+                patientName === ""
+            ) {
+                return alert("Please fill all the form data.");
+            }
             const staffName = JSON.parse(sessionStorage.getItem("user") || "{}")?.name || "Unknown Staff";
 
             const formDataWithStaff = { ...formData, staffName };
             const res = await axiosClient.post("/neuro-general-observations", formDataWithStaff);
             if (res.status === 201) {
-                alert("Observation created");
+                showToast({
+                    message: "Observation created",
+                    type: "success",
+                });
                 setFormData({
                     patientId: "",
                     patientName: "",
@@ -53,10 +71,18 @@ export default function CreateNeuroObservation() {
                     pupils: "",
                     comments: "",
                 });
-                window.location.href = "/neuro-general-observations";
-            } else alert("Error creating observation");
+                router.push("/neuro-general-observations");
+            } else {
+                showToast({
+                    message: "Something went wrong!",
+                    type: "error",
+                });
+            }
         } catch (err) {
-            alert("Error creating observation");
+            showToast({
+                message: "Something went wrong!",
+                type: "error",
+            });
             console.error(err);
         }
     };
@@ -75,7 +101,6 @@ export default function CreateNeuroObservation() {
     border border-border
     p-6 sm:p-8
     space-y-8
-    max-w-4xl
     transition-all
   "
                 >
@@ -241,7 +266,7 @@ export default function CreateNeuroObservation() {
                 </form>
 
             </PageContainer>
-            
+
         </div>
     );
 }

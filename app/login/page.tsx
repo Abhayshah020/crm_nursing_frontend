@@ -3,13 +3,15 @@
 import { useState } from "react"
 import Image from "next/image"
 import { Stethoscope, Lock, Mail, ArrowRight } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { useToast } from "@/components/toast/ToastContext"
 
 export default function LoginPage() {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState("")
-
+    const router = useRouter()
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
@@ -35,8 +37,7 @@ export default function LoginPage() {
             // ✅ Store user only (UI use)
             sessionStorage.setItem("user", JSON.stringify(data.user));
 
-            // ✅ Cookie already set by backend
-            window.location.href = "/dashboard";
+            router.push("/dashboard")
 
         } catch (err: any) {
             setError(err.message);

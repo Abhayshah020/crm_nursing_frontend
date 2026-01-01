@@ -1,28 +1,29 @@
 "use client"
 
-import Footer from "@/components/Footer"
 import { NavBarOfInternalPage } from "@/components/NavBarOfInternalPage"
 import PageContainer from "@/components/PageContainer"
+import { useToast } from "@/components/toast/ToastContext"
 import axiosClient from "@/lib/axiosClient"
 import { ChevronLeft, ChevronRight, Eye } from "lucide-react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
 export default function CoreVitalSignsTablePage() {
     const [vitals, setVitals] = useState<any[]>([])
     const [page, setPage] = useState(1)
-    const [itemsPerPage, setItemsPerPage] = useState(5);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
-    const [filter, setFilter] = useState("");   
- const handlePrevPage = () => {
+    const { showToast } = useToast();
+    const router = useRouter();
+    const handlePrevPage = () => {
         if (currentPage > 1) setCurrentPage(currentPage - 1);
     };
 
     const handleNextPage = () => {
         if (currentPage < totalPages) setCurrentPage(currentPage + 1);
     };
-    
+
     const handleFetch = async () => {
         try {
             const res = await axiosClient.get("/core-vital-signs", {
@@ -31,10 +32,16 @@ export default function CoreVitalSignsTablePage() {
             if (res.status === 200 || res.status === 201) {
                 setVitals(res.data.data)
             } else {
-                alert("Error fetching core vital signs")
+                showToast({
+                    message: "Something went wrong!",
+                    type: "error",
+                });
             }
         } catch (error) {
-            alert("Error fetching core vital signs")
+            showToast({
+                message: "Something went wrong!",
+                type: "error",
+            });
         }
     }
 

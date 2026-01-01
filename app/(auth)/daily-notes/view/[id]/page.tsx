@@ -1,16 +1,17 @@
 "use client"
 
-import Footer from "@/components/Footer"
 import { NavBarOfInternalPage } from "@/components/NavBarOfInternalPage"
 import PageContainer from "@/components/PageContainer"
+import { useToast } from "@/components/toast/ToastContext"
 import axiosClient from "@/lib/axiosClient"
-import { Activity, AlertCircle, CheckCircle, Clock, FileText, MapPin, MessageSquare, User } from "lucide-react"
+import { Clock, FileText, User } from "lucide-react"
 import { useParams } from "next/navigation"
 import { useEffect, useState } from "react"
 
 export default function ViewDailyNotePage() {
     const { id } = useParams()
     const [data, setData] = useState<any>(null)
+    const { showToast } = useToast();
 
     const handleFetch = async () => {
         try {
@@ -18,10 +19,16 @@ export default function ViewDailyNotePage() {
             if (res.status === 200 || res.status === 201) {
                 setData(res.data.data);
             } else {
-                alert("Error fetching daily note");
+                showToast({
+                    message: "Something went wrong!",
+                    type: "error",
+                });
             }
         } catch (error) {
-            alert("Error fetching daily note");
+            showToast({
+                message: "Something went wrong!",
+                type: "error",
+            });
         }
     };
 
@@ -73,7 +80,7 @@ export default function ViewDailyNotePage() {
                 </div>
             </PageContainer>
 
-            
+
         </div>
     )
 }

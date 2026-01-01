@@ -1,10 +1,11 @@
 "use client";
-import { useEffect, useState } from "react";
-import PageContainer from "@/components/PageContainer"; // adjust path
-import { Save, Sparkles } from "lucide-react";
-import axiosClient from "@/lib/axiosClient";
-import Footer from "@/components/Footer";
 import { NavBarOfInternalPage } from "@/components/NavBarOfInternalPage";
+import PageContainer from "@/components/PageContainer"; // adjust path
+import { useToast } from "@/components/toast/ToastContext";
+import axiosClient from "@/lib/axiosClient";
+import { Save, Sparkles } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function CreateFoodFluidIntake() {
     const [formData, setFormData] = useState({
@@ -15,21 +16,10 @@ export default function CreateFoodFluidIntake() {
         totalFluid: "",
         fluidDetails: "",
         comments: "",
-        staffName: "Unknown Staff",
     });
+    const { showToast } = useToast();
+    const router = useRouter();
 
-    useEffect(() => {
-        if (typeof window !== "undefined") {
-            const user = sessionStorage.getItem("user");
-            if (user) {
-                const parsed = JSON.parse(user);
-                setFormData((prev) => ({
-                    ...prev,
-                    staffName: parsed?.name || "Unknown Staff",
-                }));
-            }
-        }
-    }, []);
     const [patients, setPatients] = useState<any[]>([]);
 
     useEffect(() => {
@@ -52,9 +42,13 @@ export default function CreateFoodFluidIntake() {
     const handleSubmit = async (e: React.FormEvent) => {
         try {
             e.preventDefault();
-            const res = await axiosClient.post("/food-fluid-intakes", formData);
+            const staffName = JSON.parse(sessionStorage.getItem("user")).name;
+            const res = await axiosClient.post("/food-fluid-intakes", { ...formData, staffName });
             if (res.status === 201 || res.status === 200) {
-                alert("Record created successfully");
+                showToast({
+                    message: "Record created successfully",
+                    type: "success",
+                });
                 setFormData({
                     patientId: "",
                     patientName: "",
@@ -63,15 +57,20 @@ export default function CreateFoodFluidIntake() {
                     totalFluid: "",
                     fluidDetails: "",
                     comments: "",
-                    staffName: "",
                 });
-                window.location.href = "/food-fluid-intakes"; // redirect to table page
+                router.push("/food-fluid-intakes"); // redirect to table page
             } else {
-                alert("Error creating record");
+                showToast({
+                    message: "Something went wrong!",
+                    type: "error",
+                });
             }
         } catch (error) {
             console.error(error);
-            alert("Error creating record");
+            showToast({
+                message: "Something went wrong!",
+                type: "error",
+            });
         }
     };
 
@@ -90,7 +89,6 @@ export default function CreateFoodFluidIntake() {
     border border-border
     p-6 sm:p-8
     space-y-8
-    max-w-4xl
     transition-all
   "
                 >
@@ -133,7 +131,7 @@ export default function CreateFoodFluidIntake() {
                             <select
                                 name="patientName"
                                 value={formData.patientName}
-                                onChange={() => {
+                                onChange={(event) => {
                                     const select = event?.target as HTMLSelectElement;
                                     const selectedPatient = patients.find((p) => p.name === select.value);
                                     setFormData({
@@ -268,25 +266,6 @@ export default function CreateFoodFluidIntake() {
                     </div>
 
                     {/* Staff */}
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium text-foreground">
-                            Staff Name
-                        </label>
-                        <input
-                            name="staffName"
-                            value={formData.staffName}
-                            // onChange={handleChange}
-                            readOnly
-                            className="
-        w-full rounded-xl
-        bg-background border border-border
-        px-4 py-3
-        text-foreground
-        focus:ring-2 focus:ring-primary/50
-        outline-none transition
-      "
-                        />
-                    </div>
 
                     {/* Action */}
                     <div className="flex justify-end pt-4">
@@ -312,7 +291,7 @@ export default function CreateFoodFluidIntake() {
                 </form>
 
             </PageContainer>
-            
+
         </div>
     );
 }

@@ -29,11 +29,11 @@ export default function ViewNeuroObservation() {
 
     return (
         <div className="flex flex-col min-h-screen">
-            <NavBarOfInternalPage dontShowCreate={true} title="Daily Notes" subtitle="Manage and review all daily notes" />
+            <NavBarOfInternalPage dontShowCreate={true} title="Neurological Observations" subtitle="Manage and review" />
 
-            <PageContainer title="Observation Details" subtitle="Neurological & General Observations">
+            <PageContainer title="Neurological Observations" subtitle="Neurological & General Observations">
                 <div className="bg-card rounded-3xl border border-border shadow-lg hover:shadow-xl
-                transition-all p-6 sm:p-8 max-w-5xl mx-auto space-y-8">
+                transition-all p-6 sm:p-8 mx-auto space-y-8">
 
                     {/* ================= Header ================= */}
                     <div className="flex flex-wrap items-center justify-between gap-4

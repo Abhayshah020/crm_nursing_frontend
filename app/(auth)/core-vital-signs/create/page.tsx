@@ -7,6 +7,7 @@ import { NavBarOfInternalPage } from "@/components/NavBarOfInternalPage"
 import PageContainer from "@/components/PageContainer"
 import Footer from "@/components/Footer"
 import axiosClient from "@/lib/axiosClient"
+import { useToast } from "@/components/toast/ToastContext"
 
 export default function CreateCoreVitalSignPage() {
     const router = useRouter()
@@ -29,6 +30,7 @@ export default function CreateCoreVitalSignPage() {
         staffId: 1,
         staffName: "Unknown Staff",
     });
+    const { showToast } = useToast();
 
     useEffect(() => {
         if (typeof window !== "undefined") {
@@ -52,7 +54,10 @@ export default function CreateCoreVitalSignPage() {
             const res = await axiosClient.get("/patients")
             setPatients(res.data.data)
         } catch (error) {
-            console.error("Error fetching patients:", error)
+            showToast({
+                message: "Error fetching care plans",
+                type: "error",
+            });
         }
     }
 
@@ -65,11 +70,16 @@ export default function CreateCoreVitalSignPage() {
         e.preventDefault()
         try {
             await axiosClient.post("/core-vital-signs", form)
-            alert("Core vital sign created")
+            showToast({
+                message: "Core vital sign created",
+                type: "success",
+            });
             router.push("/core-vital-signs")
         } catch (error) {
-            console.error("Error creating vital sign:", error)
-            alert("Error creating vital sign")
+            showToast({
+                message: "Error creating vital sign",
+                type: "error",
+            });
         }
     }
 
@@ -85,8 +95,8 @@ export default function CreateCoreVitalSignPage() {
                     <div className="space-y-2">
                         <label className="block text-sm font-medium text-foreground">Patient</label>
                         <select
-                            name="patientId"
-                            value={form.patientId}
+                            name="patientName"
+                            value={form.patientName}
                             onChange={(e) => {
                                 const selected = patients.find(p => p.id.toString() === e.target.value)
                                 if (selected) {
@@ -101,7 +111,7 @@ export default function CreateCoreVitalSignPage() {
                         >
                             <option value="">Select a patient</option>
                             {patients.map(p => (
-                                <option key={p.id} value={p.id}>{p.name}</option>
+                                <option key={p.id} value={p.patientName}>{p.name}</option>
                             ))}
                         </select>
 
@@ -194,7 +204,7 @@ export default function CreateCoreVitalSignPage() {
                     </button>
                 </form>
             </PageContainer>
-            
+
         </div>
     )
 }

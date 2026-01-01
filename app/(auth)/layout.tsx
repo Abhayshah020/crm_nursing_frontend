@@ -2,7 +2,7 @@
 
 import Footer from "@/components/Footer";
 import ProtectedPage from "@/components/ProtectedPage";
-import { ToastProvider } from "@/components/toast/ToastContext";
+import { ToastProvider, useToast } from "@/components/toast/ToastContext";
 import axiosClient from "@/lib/axiosClient";
 import Cookies from "js-cookie";
 import {
@@ -19,6 +19,7 @@ import {
   Utensils,
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import type React from "react";
 
 export default function RootLayout({
@@ -26,6 +27,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const router = useRouter()
   const handleLogout = async () => {
     try {
       await axiosClient.post("/authentication/logout");
@@ -33,10 +35,9 @@ export default function RootLayout({
       localStorage.removeItem("user");
 
       if (typeof window !== "undefined") {
-        window.location.href = "/login";
+        router.push("/login")
       }
     } catch (error) {
-      console.error("Logout failed:", error);
       alert("Logout failed. Please try again.");
     }
   };

@@ -2,6 +2,7 @@
 
 import { NavBarOfInternalPage } from "@/components/NavBarOfInternalPage"
 import PageContainer from "@/components/PageContainer"
+import { useToast } from "@/components/toast/ToastContext"
 import axiosClient from "@/lib/axiosClient"
 import { ChevronLeft, ChevronRight, Eye } from "lucide-react"
 import Link from "next/link"
@@ -15,6 +16,7 @@ export default function DailyNotesTablePage() {
     const handlePrevPage = () => {
         if (currentPage > 1) setCurrentPage(currentPage - 1);
     };
+    const { showToast } = useToast();
 
     const handleNextPage = () => {
         if (currentPage < totalPages) setCurrentPage(currentPage + 1);
@@ -28,10 +30,16 @@ export default function DailyNotesTablePage() {
             if (res.status === 200 || res.status === 201) {
                 setNotes(res.data.data);
             } else {
-                alert("Error fetching daily notes");
+                showToast({
+                    message: "Something went wrong!",
+                    type: "error",
+                });
             }
         } catch (error) {
-            alert("Error fetching daily notes");
+            showToast({
+                message: "Something went wrong!",
+                type: "error",
+            });
         }
     };
 

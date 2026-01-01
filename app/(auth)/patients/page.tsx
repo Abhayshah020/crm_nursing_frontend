@@ -2,6 +2,7 @@
 
 import { NavBarOfInternalPage } from "@/components/NavBarOfInternalPage";
 import PageContainer from "@/components/PageContainer";
+import { useToast } from "@/components/toast/ToastContext";
 import axiosClient from "@/lib/axiosClient";
 import { ChevronLeft, ChevronRight, Eye } from "lucide-react";
 import Link from "next/link";
@@ -12,6 +13,7 @@ export default function PatientsTablePage() {
     const [itemsPerPage, setItemsPerPage] = useState(5);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const { showToast } = useToast();
 
     const handlePrevPage = () => {
         if (currentPage > 1) setCurrentPage(currentPage - 1);
@@ -33,7 +35,10 @@ export default function PatientsTablePage() {
                 setRecords(res.data.data);
                 setTotalPages(res.data.total);
             } catch (error) {
-                alert("Error fetching patients");
+                showToast({
+                    message: "Something went wrong!",
+                    type: "error",
+                });
             }
         };
         handleFetch();
@@ -60,13 +65,13 @@ export default function PatientsTablePage() {
                                 <tr key={patient.id} className="border-b border-border hover:bg-muted/30 transition-colors">
                                     <td className="p-4">
                                         <div className="flex items-center gap-3">
-                                            <div className="w-12 h-12 rounded-full overflow-hidden border border-gray-200 shrink-0">
+                                            {patient.image && (<div className="w-12 h-12 rounded-full overflow-hidden border border-gray-200 shrink-0">
                                                 <img
                                                     src={`${process.env.NEXT_PUBLIC_API_URL}${patient.image}`}
                                                     alt={patient.name}
                                                     className="w-full h-full object-cover"
                                                 />
-                                            </div>
+                                            </div>)}
                                             <span className="font-medium">{patient.name}</span>
                                         </div>
                                     </td>

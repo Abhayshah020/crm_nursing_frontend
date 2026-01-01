@@ -6,6 +6,8 @@ import PageContainer from "@/components/PageContainer";
 import { Save, Sparkles } from "lucide-react";
 import Footer from "@/components/Footer";
 import axiosClient from "@/lib/axiosClient";
+import { useRouter } from "next/navigation";
+import { useToast } from "@/components/toast/ToastContext";
 
 export default function CreatePatientPage() {
     const [formData, setFormData] = useState({
@@ -16,7 +18,9 @@ export default function CreatePatientPage() {
         address: "",
         details: {},
     });
+    const { showToast } = useToast();
 
+    const router = useRouter()
     const [patientImage, setPatientImage] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
 
@@ -53,14 +57,23 @@ export default function CreatePatientPage() {
             });
 
             if (res.status === 201 || res.status === 200) {
-                alert("Patient created successfully");
-                window.location.href = "/patients";
+                showToast({
+                    message: "Patient created successfully",
+                    type: "success",
+                });
+                router.push("/patients")
             } else {
-                alert("Error creating patient");
+                showToast({
+                    message: "Something went wrong!",
+                    type: "error",
+                });
             }
         } catch (error) {
             console.error(error);
-            alert("Error creating patient");
+            showToast({
+                message: "Something went wrong!",
+                type: "error",
+            });
         }
     };
 
@@ -184,7 +197,7 @@ export default function CreatePatientPage() {
                 </form>
             </PageContainer>
 
-            
+
         </div>
     );
 }

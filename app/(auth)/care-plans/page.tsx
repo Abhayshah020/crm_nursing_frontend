@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 import { NavBarOfInternalPage } from "@/components/NavBarOfInternalPage";
 import Link from "next/link";
 import axiosClient from "@/lib/axiosClient";
+import { useToast } from "@/components/toast/ToastContext";
 
 export default function CarePlansTablePage() {
     const [carePlans, setCarePlans] = useState([]);
@@ -15,6 +16,8 @@ export default function CarePlansTablePage() {
     const [itemsPerPage, setItemsPerPage] = useState(5);
     const [totalPages, setTotalPages] = useState(1);
     const [filter, setFilter] = useState("");
+    const { showToast } = useToast();
+
     const handlePrevPage = () => {
         if (currentPage > 1) setCurrentPage(currentPage - 1);
     };
@@ -31,7 +34,10 @@ export default function CarePlansTablePage() {
             setCarePlans(data.data);
         } catch (err) {
             console.error(err);
-            alert("Error fetching care plans");
+            showToast({
+                message: "Error fetching care plans",
+                type: "error",
+            });
         }
     };
 
@@ -39,17 +45,6 @@ export default function CarePlansTablePage() {
     useEffect(() => {
         fetchCarePlans();
     }, [currentPage]);
-
-    const handleDelete = async (id) => {
-        if (!confirm("Are you sure you want to delete this care plan?")) return;
-        try {
-            await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/care-plans/${id}`);
-            setCarePlans((prev) => prev.filter((cp) => cp.id !== id));
-        } catch (err) {
-            console.error(err);
-            alert("Failed to delete care plan.");
-        }
-    };
 
     return (
         <div className="flex flex-col min-h-screen bg-slate-50">

@@ -6,13 +6,14 @@ import axiosClient from "@/lib/axiosClient";
 import Footer from "@/components/Footer";
 import { NavBarOfInternalPage } from "@/components/NavBarOfInternalPage";
 import { ChevronLeft, ChevronRight, Eye } from "lucide-react";
+import { useToast } from "@/components/toast/ToastContext";
 
 export default function FoodFluidIntakeList() {
     const [intakes, setIntakes] = useState<any[]>([]);
-    const [itemsPerPage, setItemsPerPage] = useState(5);
     const [totalPages, setTotalPages] = useState(1);
     const [currentPage, setCurrentPage] = useState(1);
-    const [filter, setFilter] = useState("");
+    const { showToast } = useToast();
+
     const handlePrevPage = () => {
         if (currentPage > 1) setCurrentPage(currentPage - 1);
     };
@@ -28,7 +29,10 @@ export default function FoodFluidIntakeList() {
                 setIntakes(res.data.data); // adjust if your API returns differently
             }
         } catch (err) {
-            console.error("Error fetching food & fluid intakes:", err);
+            showToast({
+                message: "Something went wrong!",
+                type: "error",
+            });
         }
     };
 

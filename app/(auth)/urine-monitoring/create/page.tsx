@@ -5,6 +5,8 @@ import PageContainer from "@/components/PageContainer";
 import axiosClient from "@/lib/axiosClient";
 import Footer from "@/components/Footer";
 import { NavBarOfInternalPage } from "@/components/NavBarOfInternalPage";
+import { useToast } from "@/components/toast/ToastContext";
+import { useRouter } from "next/navigation";
 
 const initialFormData = {
     patientId: "",
@@ -53,26 +55,14 @@ const initialFormData = {
     },
     rnGpManagerNotified: false,
     comments: "",
-    staffName: "Unknown Staff",
 };
 export default function UrineMonitoringForm() {
 
     const [formData, setFormData] = useState(initialFormData);
     const [patients, setPatients] = useState<any[]>([]);
+    const { showToast } = useToast();
+    const router = useRouter()
 
-
-    useEffect(() => {
-        if (typeof window !== "undefined") {
-            const user = sessionStorage.getItem("user");
-            if (user) {
-                const parsed = JSON.parse(user);
-                setFormData((prev) => ({
-                    ...prev,
-                    staffName: parsed?.name || "Unknown Staff",
-                }));
-            }
-        }
-    }, []);
     const fetchPatients = async () => {
         try {
             const res = await axiosClient.get("/patients");
@@ -106,15 +96,25 @@ export default function UrineMonitoringForm() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const res = await axiosClient.post("/urine-monitoring", formData);
+            if (formData.patientName === "") {
+                alert("Please fill the name of the patient");
+                return;
+            }
+            const staffName = JSON.parse(sessionStorage.getItem("user")).name
+            const res = await axiosClient.post("/urine-monitoring", { ...formData, staffName });
             if (res.status === 201 || res.status === 200) {
-                alert("Urine Monitoring record created successfully");
+                showToast({
+                    message: "Urine Monitoring record created successfully",
+                    type: "success",
+                });
                 setFormData(initialFormData);
-                window.location.href = "/urine-monitoring";
+                router.push("/urine-monitoring")
             }
         } catch (err) {
-            console.error("Error creating record:", err);
-            alert("Error creating record");
+            showToast({
+                message: "Something went wrong!",
+                type: "error",
+            });
         }
     };
 
@@ -153,18 +153,6 @@ export default function UrineMonitoringForm() {
                                         <option key={p.id} value={p.name}>{p.name}</option>
                                     ))}
                                 </select>
-                            </div>
-
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium">Staff Name</label>
-                                <input
-                                    name="staffName"
-                                    value={formData.staffName}
-                                    // onChange={handleChange}
-                                    readOnly
-                                    className="input"
-                                    required
-                                />
                             </div>
                         </div>
                     </section>
@@ -350,7 +338,7 @@ export default function UrineMonitoringForm() {
                     </div>
                 </form>
             </PageContainer>
-            
+
         </div>
 
     );

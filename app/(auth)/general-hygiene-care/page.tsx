@@ -57,10 +57,10 @@ export default function GeneralHygieneCareList() {
                                     <td className="p-3">
                                         {r.patientName}
                                     </td>
-                                    <td className="p-3 text-center">{r.sponge ? "✔" : ""}</td>
-                                    <td className="p-3 text-center">{r.shower ? "✔" : ""}</td>
-                                    <td className="p-3 text-center">{r.hairWash ? "✔" : ""}</td>
-                                    <td className="p-3 text-center">{r.oralCare ? "✔" : ""}</td>
+                                    <td className="p-3 text-center">{r.sponge ? "Done" : ""}</td>
+                                    <td className="p-3 text-center">{r.shower ? "Done" : ""}</td>
+                                    <td className="p-3 text-center">{r.hairWash ? "Done" : ""}</td>
+                                    <td className="p-3 text-center">{r.oralCare ? "Done" : ""}</td>
                                     <td className="p-3 text-center">{new Date(r.timestamp).toLocaleDateString()}</td>
                                     <td className="p-4">
                                         <div className="flex gap-3 justify-center">

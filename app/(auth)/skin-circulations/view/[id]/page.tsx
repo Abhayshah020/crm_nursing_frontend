@@ -13,7 +13,7 @@ export default function ViewSkinCirculation() {
     const fetchRecord = async () => {
         try {
             const res = await axiosClient.get(`/skin-circulations/${id}`);
-            if (res.status === 200) setData(res.data.data);
+            if (res.status === 200) setData(res.data);
         } catch (err) {
             console.error(err);
         }

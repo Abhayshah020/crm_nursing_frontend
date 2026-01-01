@@ -7,6 +7,7 @@ import Footer from "@/components/Footer"
 import { NavBarOfInternalPage } from "@/components/NavBarOfInternalPage"
 import Link from "next/link"
 import { ChevronLeft, ChevronRight, Eye } from "lucide-react"
+import { useToast } from "@/components/toast/ToastContext"
 
 export default function PainComfortAssessmentListPage() {
     const [assessments, setAssessments] = useState<any[]>([])
@@ -14,7 +15,8 @@ export default function PainComfortAssessmentListPage() {
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(5);
     const [totalPages, setTotalPages] = useState(1);
-    const [filter, setFilter] = useState("");
+    const { showToast } = useToast();
+
     const handlePrevPage = () => {
         if (currentPage > 1) setCurrentPage(currentPage - 1);
     };
@@ -28,8 +30,16 @@ export default function PainComfortAssessmentListPage() {
     }, [])
 
     const fetchData = async () => {
-        const res = await axiosClient.get("/pain-comfort-assessments")
-        setAssessments(res.data.data)
+        try {
+            const res = await axiosClient.get("/pain-comfort-assessments")
+            setAssessments(res.data.data)
+
+        } catch (error) {
+            showToast({
+                message: "Something went wrong!",
+                type: "error",
+            });
+        }
     }
 
     return (

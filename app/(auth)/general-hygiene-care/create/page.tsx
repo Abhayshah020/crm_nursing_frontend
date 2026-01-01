@@ -6,6 +6,8 @@ import { Save, Sparkles } from "lucide-react";
 import axiosClient from "@/lib/axiosClient";
 import Footer from "@/components/Footer";
 import { NavBarOfInternalPage } from "@/components/NavBarOfInternalPage";
+import { useToast } from "@/components/toast/ToastContext";
+import { useRouter } from "next/navigation";
 
 export const dynamic = "force-dynamic"; // ✅ prevent prerender
 
@@ -22,10 +24,9 @@ export default function NewGeneralHygieneCare() {
         denturesCleaned: false,
         bedBath: false,
         comments: "",
-        staffName: "Unknown Staff",
     });
-
-    // ✅ Safe browser-only sessionStorage access
+    const { showToast } = useToast();
+    const router = useRouter();
     useEffect(() => {
         if (typeof window !== "undefined") {
             const user = sessionStorage.getItem("user");
@@ -73,25 +74,31 @@ export default function NewGeneralHygieneCare() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const res = await axiosClient.post("/general-hygiene-care", formData);
+            const staffName = JSON.parse(sessionStorage.getItem("user")).name;
+            const res = await axiosClient.post("/general-hygiene-care", { ...formData, staffName });
             if (res.status === 200 || res.status === 201) {
-                alert("Record created successfully");
-                window.location.href = "/general-hygiene-care";
+                showToast({
+                    message: "Record created successfully",
+                    type: "success",
+                });
+                router.push("/general-hygiene-care");
             }
         } catch (err) {
-            console.error(err);
-            alert("Error creating record");
+            showToast({
+                message: "Something went wrong!",
+                type: "error",
+            });
         }
     };
 
     return (
         <div className="flex flex-col min-h-screen">
-            <NavBarOfInternalPage subtitle="" dontShowCreate title="New General Hygiene Care" />
+            <NavBarOfInternalPage subtitle="" dontShowCreate title="General Hygiene Care" />
 
-            <PageContainer title="New General Hygiene Care" subtitle="Document hygiene care observations">
+            <PageContainer title="General Hygiene Care" subtitle="Document hygiene care observations">
                 <form
                     onSubmit={handleSubmit}
-                    className="bg-card rounded-2xl shadow-lg border p-6 sm:p-8 space-y-6 max-w-5xl"
+                    className="bg-card rounded-2xl shadow-lg border p-6 sm:p-8 space-y-6"
                 >
                     <div>
                         <label className="block text-sm font-medium">Patient Name</label>
@@ -140,20 +147,13 @@ export default function NewGeneralHygieneCare() {
                         placeholder="Comments"
                     />
 
-                    <input
-                        type="text"
-                        value={formData.staffName}
-                        readOnly
-                        className="w-full border rounded-xl px-4 py-3"
-                    />
-
                     <button className="flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-xl">
                         <Save size={18} /> Save Record <Sparkles size={14} />
                     </button>
                 </form>
             </PageContainer>
 
-            
+
         </div>
     );
 }

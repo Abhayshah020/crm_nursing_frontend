@@ -8,8 +8,13 @@ import PageContainer from "@/components/PageContainer"
 import axiosClient from "@/lib/axiosClient"
 import { Save, Sparkles } from "lucide-react"
 import { useEffect, useMemo, useState } from "react"
+import { useToast } from "@/components/toast/ToastContext"
+import { useRouter } from "next/navigation";
 
 export default function CreateDailyNotePage() {
+    const { showToast } = useToast();
+    const router = useRouter();
+
     const formattedDate = useMemo(() => {
         const currentDate = new Date();
         const year = currentDate.getFullYear();
@@ -52,7 +57,10 @@ export default function CreateDailyNotePage() {
                 setPatients(res.data.data);
             }
         } catch (err) {
-            console.error("Error fetching patients:", err);
+            showToast({
+                message: "Something went wrong!",
+                type: "error",
+            });
         }
     };
 
@@ -69,14 +77,23 @@ export default function CreateDailyNotePage() {
             e.preventDefault();
             const res = await axiosClient.post("/daily-notes", formData);
             if (res.status === 201 || res.status === 200) {
-                alert("Daily note created");
+                showToast({
+                    message: "Daily note saved successfully",
+                    type: "success",
+                });
                 setFormData({ patientId: "", patientName: "", timeStamps: "", notes: "", date: "", time: "" });
-                window.location.href = "/daily-notes";
+                router.push("/daily-notes");
             } else {
-                alert("Error creating daily note");
+                showToast({
+                    message: "Something went wrong!",
+                    type: "error",
+                });
             }
         } catch (error) {
-            alert("Error creating daily note");
+            showToast({
+                message: "Something went wrong!",
+                type: "error",
+            });
         }
     };
 
@@ -176,7 +193,7 @@ export default function CreateDailyNotePage() {
                     </button>
                 </form>
             </PageContainer>
-            
+
         </div>
     )
 }

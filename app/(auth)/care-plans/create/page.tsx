@@ -1,41 +1,38 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import axios from "axios"
+import { useToast } from "@/components/toast/ToastContext"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import axiosClient from "@/lib/axiosClient"
 import {
-    User,
-    Calendar,
-    Phone,
-    Stethoscope,
-    MessageSquare,
-    Eye,
-    Ear,
-    HeartPulse,
-    Pill,
-    Droplet,
-    Badge as Bandage,
-    Utensils,
     AlertTriangle,
-    FileText,
+    ArrowLeft,
+    Badge as Bandage,
+    Calendar,
     CheckCircle2,
     ChevronLeft,
     ChevronRight,
-    Save,
+    Droplet,
+    Ear,
+    Eye,
     FileCheck,
-    Users,
+    FileText,
+    HeartPulse,
+    MessageSquare,
+    Phone,
+    Pill,
+    Save,
     Shield,
-    ArrowLeft,
+    Stethoscope,
+    User,
+    Users,
+    Utensils,
 } from "lucide-react"
-import AppNavbar from "@/components/AppNavbar"
-import Footer from "@/components/Footer"
 import { useRouter } from "next/navigation"
-import { NavBarOfInternalPage } from "@/components/NavBarOfInternalPage"
-import axiosClient from "@/lib/axiosClient"
+import { useEffect, useState } from "react"
 
 type FormDataType = {
     patientId: string
@@ -159,6 +156,7 @@ export default function CarePlanForm() {
     const [step, setStep] = useState(1)
     const [status, setStatus] = useState<"draft" | "completed">("draft")
     const router = useRouter();
+    const { showToast } = useToast();
 
     const [formData, setFormData] = useState<FormDataType>({
         patientId: "",
@@ -277,7 +275,10 @@ export default function CarePlanForm() {
                 setPatients(res.data.data);
             }
         } catch (err) {
-            console.error("Error fetching patients:", err);
+            showToast({
+                message: "Error creating bowel chart",
+                type: "error",
+            });
         }
     };
 
@@ -301,12 +302,15 @@ export default function CarePlanForm() {
                 ...others
             } = formData;
 
-            const createdBy = JSON.parse(sessionStorage.getItem("user") || "{}").id || 0; 
+            const createdBy = JSON.parse(sessionStorage.getItem("user") || "{}").id || 0;
 
-            if(patientId === "" || patientName === "" || createdBy === 0) {
-                alert("Please select a client before saving the Care Plan.");
+            if (patientId === "" || patientName === "" || createdBy === 0) {
+                showToast({
+                    message: "Please select a client before saving the Care Plan.",
+                    type: "error",
+                });
                 return;
-            }   
+            }
             const res = await axiosClient.post("/care-plans", {
                 patientId,
                 patientName,
@@ -321,13 +325,22 @@ export default function CarePlanForm() {
             });
             if (res.status === 201 || res.status === 200) {
                 alert("Care Plan saved successfully");
-                window.location.href = "/care-plans";
+                showToast({
+                    message: "Please select a client before saving the Care Plan.",
+                    type: "success",
+                });
+                router.push("/care-plans")
             } else {
-                alert("Error saving Care Plan");
+                showToast({
+                    message: "Error saving Care Plan",
+                    type: "error",
+                });
             }
         } catch (err) {
-            console.error(err);
-            alert("Error saving Care Plan");
+            showToast({
+                message: "Error saving Care Plan",
+                type: "error",
+            });
         }
     };
 
@@ -2981,7 +2994,7 @@ export default function CarePlanForm() {
                     </div>
                 </div>
             </main>
-            
+
 
         </div>
     )

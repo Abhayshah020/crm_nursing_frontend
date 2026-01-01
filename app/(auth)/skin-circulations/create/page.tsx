@@ -5,19 +5,20 @@ import PageContainer from "@/components/PageContainer";
 import axiosClient from "@/lib/axiosClient";
 import Footer from "@/components/Footer";
 import { NavBarOfInternalPage } from "@/components/NavBarOfInternalPage";
+import { useToast } from "@/components/toast/ToastContext";
 
 export default function NewSkinCirculation() {
     const [patients, setPatients] = useState<any[]>([]);
     const [formData, setFormData] = useState({
         patientId: "",
         patientName: "",
-        skinColour: "",
-        skinTemperature: "",
-        skinIntegrityIssues: "",
+        skinColour: "Normal",
+        skinTemperature: "Warm",
+        skinIntegrityIssues: "Nil",
         capillaryRefill: "<2 sec",
         comments: "",
-        staffName: "Unknown Staff",
     });
+    const { showToast } = useToast();
 
     useEffect(() => {
         if (typeof window !== "undefined") {
@@ -52,9 +53,18 @@ export default function NewSkinCirculation() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const res = await axiosClient.post("/skin-circulations", formData);
+            if (formData.patientName === "") {
+                return alert("Please fill the name of the patient!")
+            }
+            const staffName = JSON.parse(sessionStorage.getItem('user')).name
+
+            const res = await axiosClient.post("/skin-circulations", { ...formData, staffName });
             if (res.status === 201 || res.status === 200) {
-                alert("Skin & Circulation record created");
+                showToast({
+                    message: "Skin & Circulation record created",
+                    type: "success",
+                });
+                alert();
                 setFormData({
                     patientId: "",
                     patientName: "",
@@ -63,20 +73,27 @@ export default function NewSkinCirculation() {
                     skinIntegrityIssues: "",
                     capillaryRefill: "",
                     comments: "",
-                    staffName: "",
                 });
                 window.location.href = "/skin-circulations";
-            } else alert("Error creating record");
+            } else {
+                showToast({
+                    message: "Something went wrong!",
+                    type: "error",
+                });
+            }
         } catch (error) {
-            alert("Error creating record");
+            showToast({
+                message: "Something went wrong!",
+                type: "error",
+            });
         }
     };
 
     return (
         <div className="flex flex-col min-h-screen">
-            <NavBarOfInternalPage dontShowCreate={true} title="New Skin & Circulation Record" subtitle="Manage and review" />
+            <NavBarOfInternalPage dontShowCreate={true} title="Skin & Circulation Record" subtitle="Manage and review" />
 
-            <PageContainer title="New Skin & Circulation Record" subtitle="Document patient skin and circulation">
+            <PageContainer title="Skin & Circulation Record" subtitle="Document patient skin and circulation">
                 <form
                     onSubmit={handleSubmit}
                     className="
@@ -85,7 +102,6 @@ export default function NewSkinCirculation() {
     shadow-lg hover:shadow-xl
     border border-border
     p-6 sm:p-8
-    max-w-4xl
     space-y-8
     transition-all
   "
@@ -244,33 +260,6 @@ export default function NewSkinCirculation() {
                         />
                     </div>
 
-                    {/* Staff */}
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium text-foreground">
-                            Staff Name
-                        </label>
-                        <input
-                            type="text"
-                            name="staffName"
-                            value={formData.staffName}
-                            // onChange={handleChange}
-                            readOnly
-                            className="
-        w-full
-        rounded-xl
-        bg-background
-        border border-border
-        px-4 py-3
-        text-foreground
-        focus:ring-2 focus:ring-primary/50
-        focus:border-primary
-        outline-none
-        transition
-      "
-                        />
-                    </div>
-
-                    {/* Action */}
                     <div className="flex justify-end pt-4">
                         <button
                             type="submit"
@@ -293,7 +282,7 @@ export default function NewSkinCirculation() {
                 </form>
 
             </PageContainer>
-            
+
         </div>
     );
 }
