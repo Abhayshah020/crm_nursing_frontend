@@ -22,3 +22,23 @@ export const Status = ({ label, value }: any) => (
         </span>
     </div>
 );
+
+export function InfoCard({
+    icon: Icon,
+    title,
+    children
+}: {
+    icon: any
+    title: string
+    children: React.ReactNode
+}) {
+    return (
+        <div className="flex items-start gap-3 p-4 bg-muted/30 rounded-xl">
+            <Icon className="text-primary mt-1" size={20} />
+            <div className="flex-1">
+                <p className="text-sm text-muted-foreground mb-1">{title}</p>
+                {children}
+            </div>
+        </div>
+    )
+}

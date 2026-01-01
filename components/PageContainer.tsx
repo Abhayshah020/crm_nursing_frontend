@@ -11,7 +11,7 @@ export default function PageContainer({
   children: React.ReactNode
 }) {
   return (
-    <div className="min-h-[70vh] bg-gradient-to-br from-background via-muted/20 to-background">
+    <div className="min-h-[70vh]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
         <div className="mb-8 sm:mb-12">
           <h1 className="flex justify-between text-3xl sm:text-4xl font-bold text-foreground mb-2 text-balance">{title}
