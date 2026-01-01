@@ -19,7 +19,7 @@ export default function ViewGeneralHygieneCare() {
         const fetchData = async () => {
             try {
                 const res = await axiosClient.get(`/general-hygiene-care/${id}`);
-                if (res.status === 200) setData(res.data.data);
+                if (res.status === 200) setData(res.data);
             } catch (err) {
                 console.error(err);
             }

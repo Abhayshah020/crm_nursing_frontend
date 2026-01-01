@@ -20,7 +20,7 @@ export default function BowelChartView() {
         const fetchData = async () => {
             try {
                 const res = await axiosClient.get(`/bowel-charts/${id}`);
-                setData(res.data.data);
+                setData(res.data);
             } catch (err) {
                 showToast({
                     message: "Error creating bowel chart",

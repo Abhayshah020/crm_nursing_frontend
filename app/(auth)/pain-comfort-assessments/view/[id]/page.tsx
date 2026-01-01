@@ -22,7 +22,7 @@ export default function ViewPainComfortAssessmentPage() {
             const res = await axiosClient.get(`/pain-comfort-assessments/${id}`)
 
             if (res.status === 200) {
-                setData(res.data.data)
+                setData(res.data)
 
             }
         } catch (err) {

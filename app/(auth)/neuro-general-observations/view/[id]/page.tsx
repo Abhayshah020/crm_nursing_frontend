@@ -17,7 +17,7 @@ export default function ViewNeuroObservation() {
         const fetchObservation = async () => {
             try {
                 const res = await axiosClient.get(`/neuro-general-observations/${id}`);
-                if (res.status === 200) setData(res.data.data);
+                if (res.status === 200) setData(res.data);
             } catch (err) {
                 console.error(err);
             }
