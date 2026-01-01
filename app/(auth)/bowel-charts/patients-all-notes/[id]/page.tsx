@@ -51,7 +51,7 @@ export default function BowelChartTable() {
         <div className="flex flex-col min-h-screen bg-slate-50">
             <NavBarOfInternalPage
                 mainPage={true}
-                linkCreate="/bowel-charts/create"
+                linkCreate={`/bowel-charts/create-patient/${id}`}
                 title="Bowel Charts"
                 subtitle="Manage and review all bowel movement records"
             />

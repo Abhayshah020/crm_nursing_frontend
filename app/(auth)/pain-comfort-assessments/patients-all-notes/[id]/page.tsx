@@ -50,7 +50,7 @@ export default function PainComfortAssessmentListPage() {
                 mainPage={true}
                 title="Pain & Comfort Assessment"
                 subtitle="All assessments"
-                linkCreate={`/pain-comfort-assessments/patients-all-notes/${id}`}
+                linkCreate={`/pain-comfort-assessments/create-patient/${id}`}
             />
 
             <PageContainer title="Pain & Comfort Assessment" subtitle="Pain & comfort records">

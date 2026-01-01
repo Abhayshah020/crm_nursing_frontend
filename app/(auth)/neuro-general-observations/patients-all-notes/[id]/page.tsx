@@ -53,7 +53,7 @@ export default function NeuroObservationsTable() {
         <div className="flex flex-col min-h-screen">
             <NavBarOfInternalPage
                 mainPage={true}
-                linkCreate={`/neuro-general-observations/patients-all-notes/${id}`}
+                linkCreate={`/neuro-general-observations/create-patient/${id}`}
                 title="Neurological Observations"
                 subtitle="Manage and review all neurological observations"
             />

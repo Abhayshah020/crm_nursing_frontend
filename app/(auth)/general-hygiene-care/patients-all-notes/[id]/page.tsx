@@ -47,7 +47,7 @@ export default function GeneralHygieneCareList() {
         <div className="flex flex-col min-h-screen">
             <NavBarOfInternalPage
                 mainPage={true}
-                linkCreate={`/general-hygiene-care/patients-all-notes/${id}`}
+                linkCreate={`/general-hygiene-care/create-patient/${id}`}
                 title="General Hygiene Care Records"
                 subtitle="Manage and review"
             />

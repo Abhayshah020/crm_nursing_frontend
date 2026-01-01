@@ -50,7 +50,7 @@ export default function CoreVitalSignsTablePage() {
     return (
         <div className="flex flex-col min-h-screen">
             <NavBarOfInternalPage
-                linkCreate={`/core-vital-signs/patients-all-notes/${id}`}
+                linkCreate={`/core-vital-signs/create-patient/${id}`}
                 title="Core Vital Signs"
                 subtitle="Manage and review all core vital records"
             />

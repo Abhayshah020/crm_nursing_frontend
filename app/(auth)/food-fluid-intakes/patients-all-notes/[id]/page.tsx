@@ -53,7 +53,7 @@ export default function FoodFluidIntakeList() {
         <div className="flex flex-col min-h-screen">
             <NavBarOfInternalPage
                 mainPage={true}
-                linkCreate={`/food-fluid-intakes/patients-all-notes/${id}`}
+                linkCreate={`/food-fluid-intakes/create-patient/${id}`}
                 title="Food & Fluid Intake"
                 subtitle="Manage and review all food & fluid intake records"
 

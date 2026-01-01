@@ -49,7 +49,7 @@ export default function SkinCirculationList() {
         <div className="flex flex-col min-h-screen">
             <NavBarOfInternalPage
                 mainPage={true}
-                linkCreate={`/skin-circulations/patients-all-notes/${id}`}
+                linkCreate={`/skin-circulations/create-patient/${id}`}
                 title="Skin & Circulation"
                 subtitle="Manage all patients"
             />

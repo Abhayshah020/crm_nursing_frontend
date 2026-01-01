@@ -69,7 +69,7 @@ export default function UrineMonitoringTable() {
         <div className="flex flex-col min-h-screen">
             <NavBarOfInternalPage
                 mainPage={true}
-                linkCreate={`/urine-monitoring/patients-all-notes/${id}`}
+                linkCreate={`/urine-monitoring/create-patient/${id}`}
                 title="Urine Monitoring Records"
                 subtitle="Manage all patients"
             />

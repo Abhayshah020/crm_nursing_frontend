@@ -53,7 +53,7 @@ export default function DailyNotesTablePage() {
         <div className="flex flex-col min-h-screen">
             <NavBarOfInternalPage
                 mainPage={true}
-                linkCreate={`/daily-notes/patients-all-notes/${id}`}
+                linkCreate={`/daily-notes/create-patient/${id}`}
                 title="Daily Notes"
                 subtitle="Manage and review all daily notes"
             />
