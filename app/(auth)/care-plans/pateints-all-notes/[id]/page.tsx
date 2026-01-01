@@ -34,8 +34,8 @@ export default function CarePlansTablePage() {
                         patientId: id,
                     },
                 });
-setRecords(res.data.data);
-      setTotalPages(res.data.total);
+                setRecords(res.data.data);
+                setTotalPages(res.data.total);
             } catch (err) {
                 console.error(err);
                 alert("Error fetching care plans");

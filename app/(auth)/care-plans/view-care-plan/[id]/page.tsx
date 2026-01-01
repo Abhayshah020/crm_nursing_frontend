@@ -260,7 +260,7 @@ export default function ViewCarePlanPage() {
     const fetchCarePlan = async () => {
         try {
             const res = await axiosClient.get(`/care-plans/${id}`);
-            setCarePlan(res.data.data);
+            setCarePlan(res.data);
         } catch (err) {
             console.error(err);
         } finally {
