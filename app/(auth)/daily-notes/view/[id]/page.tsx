@@ -17,7 +17,7 @@ export default function ViewDailyNotePage() {
         try {
             const res = await axiosClient.get(`/daily-notes/${id}`);
             if (res.status === 200 || res.status === 201) {
-                setData(res.data.data);
+                setData(res.data);
             } else {
                 showToast({
                     message: "Something went wrong!",
