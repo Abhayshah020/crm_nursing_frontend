@@ -53,9 +53,7 @@ export default function CreateDailyNotePage() {
 
     const fetchPatients = async () => {
         try {
-            const res = await axiosClient.get("/patients", {
-                params: { id: id }
-            });
+            const res = await axiosClient.get(`/patients/${id}`);
             if (res.status === 200) {
                 setFormData((prev) => ({
                     ...prev,
@@ -135,7 +133,7 @@ export default function CreateDailyNotePage() {
                         <label className="block text-sm font-medium text-foreground">Patient Name</label>
                         <input
                             id="patientName"
-                            value={formData.patientName}
+                            value={formData.patientName || ""}
                             readOnly
                             className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
                         />

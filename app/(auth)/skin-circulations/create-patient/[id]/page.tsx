@@ -24,9 +24,7 @@ export default function NewSkinCirculation() {
 
     const fetchPatients = async () => {
         try {
-            const res = await axiosClient.get("/patients", {
-                params: { id: id }
-            });
+            const res = await axiosClient.get(`/patients/${id}`);
             if (res.status === 200) {
                 setFormData((prev) => ({
                     ...prev,

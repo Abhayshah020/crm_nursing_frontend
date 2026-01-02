@@ -32,9 +32,7 @@ export default function NewGeneralHygieneCare() {
     useEffect(() => {
         const fetchPatients = async () => {
             try {
-                const res = await axiosClient.get("/patients", {
-                    params: { id: id }
-                });
+                const res = await axiosClient.get(`/patients/${id}`);
                 if (res.status === 200) {
                     setFormData((prev) => ({
                         ...prev,
@@ -66,7 +64,7 @@ export default function NewGeneralHygieneCare() {
             const createdBy = parsed?.name || "Unknown Staff"
             const createdById = parsed?.id || 0
             const createdPerson = { createdBy, createdById }
-            
+
             const res = await axiosClient.post("/general-hygiene-care", { ...formData, ...createdPerson });
             if (res.status === 200 || res.status === 201) {
                 showToast({
