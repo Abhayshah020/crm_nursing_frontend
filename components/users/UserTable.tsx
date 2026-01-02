@@ -1,6 +1,7 @@
 "use client";
 
 export default function UserTable({ users, onEdit, onDelete }: any) {
+    console.log("🚀 ~ UserTable ~ users:", users)
     return (
         <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
             {/* ================= DESKTOP & TABLET TABLE ================= */}
@@ -48,11 +49,10 @@ export default function UserTable({ users, onEdit, onDelete }: any) {
                                 </td>
                                 <td className="px-4 py-3">
                                     <span
-                                        className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                            u.role === "admin"
+                                        className={`px-2 py-1 rounded-full text-xs font-medium ${u.role === "admin"
                                                 ? "bg-red-100 text-red-700"
                                                 : "bg-blue-100 text-blue-700"
-                                        }`}
+                                            }`}
                                     >
                                         {u.role}
                                     </span>
@@ -64,12 +64,14 @@ export default function UserTable({ users, onEdit, onDelete }: any) {
                                     >
                                         Edit
                                     </button>
-                                    {users.createdBy !== "system" &&( <button
-                                        onClick={() => onDelete(u.id)}
-                                        className="px-3 py-1 rounded-md text-red-600 hover:bg-red-50"
-                                    >
-                                        Delete
-                                    </button>)}
+                                    {u.createdBy !== "system" && (
+                                        <button
+                                            onClick={() => onDelete(u.id)}
+                                            className="px-3 py-1 rounded-md text-red-600 hover:bg-red-50"
+                                        >
+                                            Delete
+                                        </button>
+                                    )}
                                 </td>
                             </tr>
                         ))}
@@ -102,11 +104,10 @@ export default function UserTable({ users, onEdit, onDelete }: any) {
                         <div>
                             <p className="text-sm text-gray-500">Role</p>
                             <span
-                                className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
-                                    u.role === "admin"
+                                className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${u.role === "admin"
                                         ? "bg-red-100 text-red-700"
                                         : "bg-blue-100 text-blue-700"
-                                }`}
+                                    }`}
                             >
                                 {u.role}
                             </span>

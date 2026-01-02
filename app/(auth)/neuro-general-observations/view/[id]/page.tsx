@@ -105,7 +105,7 @@ export default function ViewNeuroObservation() {
                         <div className="flex gap-1 items-center">
                             <Clock size={16} />
                             <span>
-                                Created: {new Date(data.timestamp).toLocaleString()}
+                                Time Stamp: {new Date(data.timestamp).toLocaleString()}
                             </span>
                         </div>
 
