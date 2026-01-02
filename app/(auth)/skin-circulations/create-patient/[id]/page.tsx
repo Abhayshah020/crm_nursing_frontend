@@ -22,19 +22,6 @@ export default function NewSkinCirculation() {
 
     const { showToast } = useToast();
 
-    useEffect(() => {
-        if (typeof window !== "undefined") {
-            const user = sessionStorage.getItem("user");
-            if (user) {
-                const parsed = JSON.parse(user);
-                setFormData((prev) => ({
-                    ...prev,
-                    staffName: parsed?.name || "Unknown Staff",
-                }));
-            }
-        }
-    }, []);
-
     const fetchPatients = async () => {
         try {
             const res = await axiosClient.get("/patients", {
@@ -66,9 +53,12 @@ export default function NewSkinCirculation() {
             if (formData.patientName === "") {
                 return alert("Please fill the name of the patient!")
             }
-            const staffName = JSON.parse(sessionStorage.getItem('user')).name
+            const parsed = JSON.parse(sessionStorage.getItem("user"));
+            const createdBy = parsed?.name || "Unknown Staff"
+            const createdById = parsed?.id || 0
+            const createdPerson = { createdBy, createdById }
 
-            const res = await axiosClient.post("/skin-circulations", { ...formData, staffName });
+            const res = await axiosClient.post("/skin-circulations", { ...formData, ...createdPerson });
             if (res.status === 201 || res.status === 200) {
                 showToast({
                     message: "Skin & Circulation record created",

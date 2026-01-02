@@ -7,6 +7,7 @@ import axiosClient from "@/lib/axiosClient";
 import { Info, Status } from "@/components/ViewInfoStatus";
 import { NavBarOfInternalPage } from "@/components/NavBarOfInternalPage";
 import Footer from "@/components/Footer";
+import { Clock, User } from "lucide-react";
 
 interface UrineMonitoringType {
     id: number;
@@ -74,24 +75,6 @@ export default function UrineMonitoringView() {
                             </p>
                             <p className="text-lg font-semibold text-foreground">
                                 {record.patientName}
-                            </p>
-                        </div>
-
-                        <div className="space-y-1">
-                            <p className="text-xs uppercase tracking-wide text-muted-foreground">
-                                Recorded By
-                            </p>
-                            <p className="text-lg font-semibold">
-                                {record.staffName}
-                            </p>
-                        </div>
-
-                        <div className="space-y-1 text-right">
-                            <p className="text-xs uppercase tracking-wide text-muted-foreground">
-                                Date & Time
-                            </p>
-                            <p className="text-sm font-medium">
-                                {new Date(record.timestamp).toLocaleString()}
                             </p>
                         </div>
                     </div>
@@ -211,10 +194,27 @@ export default function UrineMonitoringView() {
                             {record.comments || "N/A"}
                         </p>
                     </section>
+
+                    <div className="flex items-center justify-between gap-2 text-sm text-muted-foreground pt-4 border-t">
+                        <div className="flex gap-1 items-center">
+                            <Clock size={16} />
+                            <span>
+                                Time Stamp: {new Date(record.timestamp).toLocaleString()}
+                            </span>
+                        </div>
+
+                        <div className="flex gap-1 items-center">
+                            <User size={16} />
+                            <span>
+                                Created: {record.createdBy}
+                            </span>
+                        </div>
+
+                    </div>
                 </div>
 
             </PageContainer>
-            
+
         </div>
     );
 }

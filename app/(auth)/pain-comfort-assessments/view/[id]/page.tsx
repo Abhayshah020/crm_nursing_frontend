@@ -22,7 +22,7 @@ export default function ViewPainComfortAssessmentPage() {
             const res = await axiosClient.get(`/pain-comfort-assessments/${id}`)
 
             if (res.status === 200) {
-                setData(res.data)
+                setData(res.data.data)
 
             }
         } catch (err) {
@@ -85,14 +85,26 @@ export default function ViewPainComfortAssessmentPage() {
                     </div>
 
                     {/* Timestamp */}
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground border-t border-border pt-4">
-                        <Clock size={16} />
-                        <span>Recorded: {new Date(data.timestamp).toLocaleString()}</span>
+                    <div className="flex items-center justify-between gap-2 text-sm text-muted-foreground pt-4 border-t">
+                        <div className="flex gap-1 items-center">
+                            <Clock size={16} />
+                            <span>
+                                Time Stamp: {new Date(data.timestamp).toLocaleString()}
+                            </span>
+                        </div>
+
+                        <div className="flex gap-1 items-center">
+                            <User size={16} />
+                            <span>
+                                Created: {data.createdBy}
+                            </span>
+                        </div>
+
                     </div>
                 </div>
             </PageContainer>
 
-            
+
         </div>
     )
 }

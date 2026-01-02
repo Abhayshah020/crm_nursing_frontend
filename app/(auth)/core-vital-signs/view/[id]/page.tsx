@@ -99,12 +99,22 @@ export default function ViewCoreVitalSignPage() {
                             </div>
                         </div>
                     )}
+                    <div className="flex items-center justify-between gap-2 text-sm text-muted-foreground pt-4 border-t">
+                        <div className="flex gap-1 items-center">
+                            <Clock size={16} />
+                            <span>
+                                Time Stamp: {new Date(vital.timestamp).toLocaleString()}
+                            </span>
+                        </div>
 
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground pt-4 border-t border-border">
-                        <Clock size={16} />
-                        <span>Recorded By: {vital.staffName} at {new Date(vital.timestamp).toLocaleString()}</span>
+                        <div className="flex gap-1 items-center">
+                            <User size={16} />
+                            <span>
+                                Created: {vital.createdBy}
+                            </span>
+                        </div>
+
                     </div>
-
                 </div>
             </PageContainer>
 

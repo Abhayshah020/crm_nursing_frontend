@@ -308,7 +308,10 @@ export default function CarePlanForm() {
                 ...others
             } = formData;
 
-            const createdBy = JSON.parse(sessionStorage.getItem("user") || "{}").id || 0;
+            const parsed = JSON.parse(sessionStorage.getItem("user"));
+            const createdBy = parsed?.name || "Unknown Staff"
+            const createdById = parsed?.id || 0
+            const createdPerson = { createdBy, createdById }
 
             if (patientId === "" || patientName === "" || createdBy === 0) {
                 showToast({
@@ -327,7 +330,8 @@ export default function CarePlanForm() {
                 chronicDiseases,
                 partnershipRoles: roleOfOthersInCarePlanAgreedPartnershipActions,
                 formData: others,
-                status
+                status,
+                ...createdPerson
             });
             if (res.status === 201 || res.status === 200) {
                 showToast({

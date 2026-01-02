@@ -63,9 +63,12 @@ export default function CreateNeuroObservation() {
             ) {
                 return alert("Please fill all the form data.");
             }
-            const staffName = JSON.parse(sessionStorage.getItem("user") || "{}")?.name || "Unknown Staff";
+            const parsed = JSON.parse(sessionStorage.getItem("user"));
+            const createdBy = parsed?.name || "Unknown Staff"
+            const createdById = parsed?.id || 0
+            const createdPerson = { createdBy, createdById }
 
-            const formDataWithStaff = { ...formData, staffName };
+            const formDataWithStaff = { ...formData, ...createdPerson };
             const res = await axiosClient.post("/neuro-general-observations", formDataWithStaff);
             if (res.status === 201) {
                 showToast({

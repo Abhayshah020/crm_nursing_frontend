@@ -9,17 +9,32 @@ interface Props {
 
 export default function ProtectedPage({ children }: Props) {
     const router = useRouter();
-    const pathname = usePathname()
+    const pathname = usePathname();
 
     useEffect(() => {
-        if(pathname === "/login" || pathname === "/") {
-            return; // allow access to login page
+        // Allow public pages
+        if (pathname === "/login" || pathname === "/") {
+            return;
         }
-        const token = sessionStorage.getItem("user"); // or Cookies.get("accessToken")
-        if (!token) {
-            router.replace("/login");
-        }
-    }, [router]);
 
-    return <>{children}</>; // render children if token exists
+        const userRaw = sessionStorage.getItem("user");
+
+        // Not logged in
+        if (!userRaw) {
+            router.replace("/login");
+            return;
+        }
+
+        const user = JSON.parse(userRaw);
+
+        // Protect all /settings routes (admin only)
+        if (pathname.startsWith("/settings")) {
+            if (user.role !== "admin") {
+                router.replace("/unauthorized-page"); // or "/dashboard"
+                return;
+            }
+        }
+    }, [pathname, router]);
+
+    return <>{children}</>;
 }

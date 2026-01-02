@@ -27,23 +27,8 @@ export default function CreateCoreVitalSignPage() {
         oxygenSaturation: "",
         oxygenNote: "On Air",
         comments: "",
-        staffId: 1,
-        staffName: "Unknown Staff",
     });
     const { showToast } = useToast();
-
-    useEffect(() => {
-        if (typeof window !== "undefined") {
-            const user = sessionStorage.getItem("user");
-            if (user) {
-                const parsed = JSON.parse(user);
-                setForm((prev) => ({
-                    ...prev,
-                    staffName: parsed?.name || "Unknown Staff",
-                }));
-            }
-        }
-    }, []);
 
     useEffect(() => {
         fetchPatients()
@@ -69,7 +54,12 @@ export default function CreateCoreVitalSignPage() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         try {
-            await axiosClient.post("/core-vital-signs", form)
+            const parsed = JSON.parse(sessionStorage.getItem("user"));
+            const createdBy = parsed?.name || "Unknown Staff"
+            const createdById = parsed?.id || 0
+            const createdPerson = { createdBy, createdById }
+
+            await axiosClient.post("/core-vital-signs", { ...form, ...createdPerson })
             showToast({
                 message: "Core vital sign created",
                 type: "success",
@@ -98,7 +88,7 @@ export default function CreateCoreVitalSignPage() {
                             name="patientName"
                             value={form.patientName}
                             onChange={(e) => {
-                                const selected = patients.find(p => p.id.toString() === e.target.value)
+                                const selected = patients.find(p => p.name.toString() === e.target.value)
                                 if (selected) {
                                     setForm({
                                         ...form,
@@ -127,7 +117,6 @@ export default function CreateCoreVitalSignPage() {
                                 value={form.temperature}
                                 onChange={handleChange}
                                 className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:ring-2 focus:ring-primary outline-none transition-all"
-                                required
                             />
                             <select name="temperatureNote" value={form.temperatureNote} onChange={handleChange} className="w-full border border-border rounded-xl px-3 py-2">
                                 <option>Normal</option>
@@ -144,7 +133,6 @@ export default function CreateCoreVitalSignPage() {
                                 value={form.pulseRate}
                                 onChange={handleChange}
                                 className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:ring-2 focus:ring-primary outline-none transition-all"
-                                required
                             />
                             <select name="pulseNote" value={form.pulseNote} onChange={handleChange} className="w-full border border-border rounded-xl px-3 py-2">
                                 <option>Regular</option>
@@ -155,8 +143,8 @@ export default function CreateCoreVitalSignPage() {
                         <div className="space-y-2">
                             <label className="block text-sm font-medium text-foreground">Blood Pressure</label>
                             <div className="flex gap-2">
-                                <input type="number" placeholder="Systolic" name="bloodPressureSystolic" value={form.bloodPressureSystolic} onChange={handleChange} className="w-1/2 bg-background border border-border rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary outline-none transition-all" required />
-                                <input type="number" placeholder="Diastolic" name="bloodPressureDiastolic" value={form.bloodPressureDiastolic} onChange={handleChange} className="w-1/2 bg-background border border-border rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary outline-none transition-all" required />
+                                <input type="number" placeholder="Systolic" name="bloodPressureSystolic" value={form.bloodPressureSystolic} onChange={handleChange} className="w-1/2 bg-background border border-border rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary outline-none transition-all" />
+                                <input type="number" placeholder="Diastolic" name="bloodPressureDiastolic" value={form.bloodPressureDiastolic} onChange={handleChange} className="w-1/2 bg-background border border-border rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary outline-none transition-all" />
                             </div>
                             <select name="bloodPressurePosition" value={form.bloodPressurePosition} onChange={handleChange} className="w-full border border-border rounded-xl px-3 py-2">
                                 <option>Sitting</option>
@@ -166,7 +154,7 @@ export default function CreateCoreVitalSignPage() {
 
                         <div className="space-y-2">
                             <label className="block text-sm font-medium text-foreground">Respiratory Rate</label>
-                            <input type="number" name="respiratoryRate" value={form.respiratoryRate} onChange={handleChange} className="w-full bg-background border border-border rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary outline-none transition-all" required />
+                            <input type="number" name="respiratoryRate" value={form.respiratoryRate} onChange={handleChange} className="w-full bg-background border border-border rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary outline-none transition-all" />
                             <select name="respiratoryNote" value={form.respiratoryNote} onChange={handleChange} className="w-full border border-border rounded-xl px-3 py-2">
                                 <option>Normal</option>
                                 <option>Laboured</option>
@@ -175,7 +163,7 @@ export default function CreateCoreVitalSignPage() {
 
                         <div className="space-y-2">
                             <label className="block text-sm font-medium text-foreground">Oxygen Saturation</label>
-                            <input type="number" name="oxygenSaturation" value={form.oxygenSaturation} onChange={handleChange} className="w-full bg-background border border-border rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary outline-none transition-all" required />
+                            <input type="number" name="oxygenSaturation" value={form.oxygenSaturation} onChange={handleChange} className="w-full bg-background border border-border rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary outline-none transition-all" />
                             <select name="oxygenNote" value={form.oxygenNote} onChange={handleChange} className="w-full border border-border rounded-xl px-3 py-2">
                                 <option>On Air</option>
                                 <option>On O₂</option>

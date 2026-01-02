@@ -1,9 +1,11 @@
 "use client";
 
+import ConfirmModal from "@/components/ConfirmModal";
 import { NavBarOfInternalPage } from "@/components/NavBarOfInternalPage";
 import PageContainer from "@/components/PageContainer";
+import { useToast } from "@/components/toast/ToastContext";
 import axiosClient from "@/lib/axiosClient";
-import { ChevronLeft, ChevronRight, Eye } from "lucide-react";
+import { ChevronLeft, ChevronRight, Eye, Trash } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -12,31 +14,71 @@ export default function GeneralHygieneCareList() {
     const [itemsPerPage, setItemsPerPage] = useState(5);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
-    const [filter, setFilter] = useState("");   
- const handlePrevPage = () => {
+    const [filter, setFilter] = useState("");
+    const [deleteId, setDeleteId] = useState<number | null>(null);
+    const [userExist, setUserExist] = useState<any>(null);
+    const { showToast } = useToast();
+
+    const handlePrevPage = () => {
         if (currentPage > 1) setCurrentPage(currentPage - 1);
     };
 
     const handleNextPage = () => {
         if (currentPage < totalPages) setCurrentPage(currentPage + 1);
     };
-    
+
+    const fetchRecords = async () => {
+        try {
+            const res = await axiosClient.get("/general-hygiene-care");
+            if (res.status === 200) setRecords(res.data.data);
+        } catch (err) {
+            console.error(err);
+        }
+    };
     useEffect(() => {
-        const fetchRecords = async () => {
-            try {
-                const res = await axiosClient.get("/general-hygiene-care");
-                if (res.status === 200) setRecords(res.data.data);
-            } catch (err) {
-                console.error(err);
-            }
-        };
         fetchRecords();
     }, []);
+
+    useEffect(() => {
+        if (typeof window === "undefined") return;
+
+        const user = sessionStorage.getItem("user");
+        if (user) {
+            try {
+                setUserExist(JSON.parse(user));
+            } catch {
+                setUserExist(null);
+            }
+        }
+    }, []);
+
+    const handleDeleteConfirm = async () => {
+        if (!deleteId) return;
+        if (!userExist) return;
+        if (userExist && userExist.role !== "admin") return;
+        try {
+            await axiosClient.delete(`/general-hygiene-care/${deleteId}`);
+            showToast({ message: "Deleted record successfully!", type: "success" });
+            setDeleteId(null);
+            fetchRecords();
+        } catch {
+            showToast({ message: "Error deleting user!", type: "error" });
+        }
+    };
+
 
     return (
         <div className="flex flex-col min-h-screen">
             <NavBarOfInternalPage mainPage={true} linkCreate="/general-hygiene-care/create" title="General Hygiene Care Records" subtitle="Manage and review" />
-
+            <ConfirmModal
+                open={deleteId !== null}
+                title="Delete Record"
+                description="This action cannot be undone. Are you sure you want to delete this record?"
+                confirmText="Delete"
+                danger
+                onCancel={() => setDeleteId(null)}
+                onConfirm={handleDeleteConfirm}
+            />
             <PageContainer title="General Hygiene Care Records" subtitle="Review hygiene documentation">
                 <div className="bg-card rounded-2xl shadow-lg border p-6 max-w-7xl overflow-x-auto">
                     <table className="w-full text-sm">
@@ -70,6 +112,14 @@ export default function GeneralHygieneCareList() {
                                             >
                                                 <Eye size={18} />
                                             </Link>
+                                            {userExist && userExist?.role === 'admin' && (
+                                                <button
+                                                    onClick={() => setDeleteId(r.id)}
+                                                    className="text-primary cursor-pointer hover:text-primary/80 transition-colors p-2 hover:bg-primary/10 rounded-lg"
+                                                >
+                                                    <Trash size={18} />
+                                                </button>
+                                            )}
                                         </div>
                                     </td>
                                 </tr>

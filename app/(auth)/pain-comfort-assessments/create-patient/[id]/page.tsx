@@ -17,25 +17,12 @@ export default function CreatePainComfortAssessmentPage() {
         painManagementRequired: "No",
         actionTaken: "",
         comments: "",
-        staffId: 1,
-        staffName: "Unknown Staff",
     });
     const { id } = useParams<{ id: string }>();
 
     const { showToast } = useToast();
     const router = useRouter()
-    useEffect(() => {
-        if (typeof window !== "undefined") {
-            const user = sessionStorage.getItem("user");
-            if (user) {
-                const parsed = JSON.parse(user);
-                setFormData((prev) => ({
-                    ...prev,
-                    staffName: parsed?.name || "Unknown Staff",
-                }));
-            }
-        }
-    }, []);
+
 
     const fetchPatients = async () => {
         try {
@@ -64,12 +51,16 @@ export default function CreatePainComfortAssessmentPage() {
 
     const handleSubmit = async (e: any) => {
         try {
-
+            const parsed = JSON.parse(sessionStorage.getItem("user"));
+            const createdBy = parsed?.name || "Unknown Staff"
+            const createdById = parsed?.id || 0
+            const createdPerson = { createdBy, createdById }
             e.preventDefault()
             await axiosClient.post("/pain-comfort-assessments", {
                 ...form,
                 painScore: Number(form.painScore),
                 patientId: Number(form.patientId),
+                ...createdPerson,
             })
             showToast({
                 message: "Pain & Comfort Assessment Created",

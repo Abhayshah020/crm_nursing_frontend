@@ -75,7 +75,24 @@ export default function CreateDailyNotePage() {
     const handleSubmit = async (e: React.FormEvent) => {
         try {
             e.preventDefault();
-            const res = await axiosClient.post("/daily-notes", formData);
+            if (
+                formData.patientName === "" ||
+                formData.date === "" ||
+                formData.notes === "" ||
+                formData.time === ""
+            ) {
+                showToast({
+                    message: "Please fill all the details of notes!",
+                    type: "error",
+                });
+                return;
+            }
+            const parsed = JSON.parse(sessionStorage.getItem("user"));
+            const createdBy = parsed?.name || "Unknown Staff"
+            const createdById = parsed?.id || 0
+            const createdPerson = { createdBy, createdById }
+
+            const res = await axiosClient.post("/daily-notes", { ...formData, ...createdPerson });
             if (res.status === 201 || res.status === 200) {
                 showToast({
                     message: "Daily note saved successfully",

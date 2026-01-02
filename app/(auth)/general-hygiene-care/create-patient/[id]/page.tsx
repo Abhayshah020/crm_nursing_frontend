@@ -62,8 +62,12 @@ export default function NewGeneralHygieneCare() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const staffName = JSON.parse(sessionStorage.getItem("user")).name;
-            const res = await axiosClient.post("/general-hygiene-care", { ...formData, staffName });
+            const parsed = JSON.parse(sessionStorage.getItem("user"));
+            const createdBy = parsed?.name || "Unknown Staff"
+            const createdById = parsed?.id || 0
+            const createdPerson = { createdBy, createdById }
+            
+            const res = await axiosClient.post("/general-hygiene-care", { ...formData, ...createdPerson });
             if (res.status === 200 || res.status === 201) {
                 showToast({
                     message: "Record created successfully",

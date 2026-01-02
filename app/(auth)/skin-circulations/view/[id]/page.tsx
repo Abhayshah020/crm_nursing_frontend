@@ -27,9 +27,7 @@ export default function ViewSkinCirculation() {
 
     return (
         <PageContainer title="Skin & Circulation Details" subtitle="Patient clinical record">
-            ;
-
-            <div className="bg-card rounded-2xl shadow-lg border p-6 space-y-4 max-w-5xl hover:shadow-xl transition-shadow">
+            <div className="bg-card rounded-2xl shadow-lg border p-6 space-y-4 hover:shadow-xl transition-shadow">
 
                 {/* Patient */}
                 <div className="flex gap-3 bg-muted/30 p-4 rounded-xl">
@@ -94,9 +92,21 @@ export default function ViewSkinCirculation() {
                 </div>
 
                 {/* Timestamp */}
-                <div className="flex items-center gap-2 text-sm text-muted-foreground border-t pt-4">
-                    <Clock size={16} />
-                    {new Date(data.timestamp).toLocaleString()}
+                <div className="flex items-center justify-between gap-2 text-sm text-muted-foreground pt-4 border-t">
+                    <div className="flex gap-1 items-center">
+                        <Clock size={16} />
+                        <span>
+                            Time Stamp: {new Date(data.timestamp).toLocaleString()}
+                        </span>
+                    </div>
+
+                    <div className="flex gap-1 items-center">
+                        <User size={16} />
+                        <span>
+                            Created: {data.createdBy}
+                        </span>
+                    </div>
+
                 </div>
             </div>
         </PageContainer>

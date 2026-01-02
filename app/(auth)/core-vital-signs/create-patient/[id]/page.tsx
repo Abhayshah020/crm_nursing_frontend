@@ -27,8 +27,6 @@ export default function CreateCoreVitalSignPage() {
         oxygenSaturation: "",
         oxygenNote: "On Air",
         comments: "",
-        staffId: 1,
-        staffName: "Unknown Staff",
     });
     const { showToast } = useToast();
 
@@ -64,7 +62,12 @@ export default function CreateCoreVitalSignPage() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         try {
-            await axiosClient.post("/core-vital-signs", form)
+            const parsed = JSON.parse(sessionStorage.getItem("user"));
+            const createdBy = parsed?.name || "Unknown Staff"
+            const createdById = parsed?.id || 0
+            const createdPerson = { createdBy, createdById }
+
+            await axiosClient.post("/core-vital-signs", { ...form, ...createdPerson })
             showToast({
                 message: "Core vital sign created",
                 type: "success",

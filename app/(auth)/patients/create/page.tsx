@@ -47,6 +47,13 @@ export default function CreatePatientPage() {
             payload.append("age", formData.age);
             payload.append("address", formData.address);
             payload.append("details", JSON.stringify(formData.details));
+            
+            const parsed = JSON.parse(sessionStorage.getItem("user"));
+            const createdBy = parsed?.name || "Unknown Staff"
+            const createdById = parsed?.id || 0
+            
+            payload.append("createdBy", createdBy);
+            payload.append("createdById", createdById);
 
             if (patientImage) {
                 payload.append("patientImage", patientImage);

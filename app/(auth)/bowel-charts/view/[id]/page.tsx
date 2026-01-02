@@ -40,7 +40,7 @@ export default function BowelChartView() {
 
             <PageContainer title="Bowel Chart Details" subtitle="Review bowel movement record">
                 <div className="bg-card rounded-3xl border border-border shadow-lg hover:shadow-xl
-                transition-all p-6 sm:p-8 max-w-5xl mx-auto space-y-8">
+                transition-all p-6 sm:p-8 mx-auto space-y-8">
 
                     {/* ================= Header ================= */}
                     <div className="flex flex-wrap items-center justify-between gap-4
@@ -99,12 +99,21 @@ export default function BowelChartView() {
                     </section>
 
                     {/* ================= Footer ================= */}
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground
-                    border-t border-border pt-4">
-                        <Clock size={14} />
-                        <span>
-                            Recorded on {new Date(data.timestamp).toLocaleString()}
-                        </span>
+                    <div className="flex items-center justify-between gap-2 text-sm text-muted-foreground pt-4 border-t">
+                        <div className="flex gap-1 items-center">
+                            <Clock size={16} />
+                            <span>
+                                Time Stamp: {new Date(data.timestamp).toLocaleString()}
+                            </span>
+                        </div>
+
+                        <div className="flex gap-1 items-center">
+                            <User size={16} />
+                            <span>
+                                Created: {data.createdBy}
+                            </span>
+                        </div>
+
                     </div>
                 </div>
 

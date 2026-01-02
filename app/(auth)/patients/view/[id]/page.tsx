@@ -109,11 +109,21 @@ export default function ViewPatientPage() {
                     </div>
 
                     {/* Created at */}
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground pt-4 border-t">
-                        <Clock size={16} />
-                        <span>
-                            Created: {new Date(patient.createdAt).toLocaleString()}
-                        </span>
+                    <div className="flex items-center justify-between gap-2 text-sm text-muted-foreground pt-4 border-t">
+                        <div className="flex gap-1 items-center">
+                            <Clock size={16} />
+                            <span>
+                                Time Stamp: {new Date(patient.timestamp).toLocaleString()}
+                            </span>
+                        </div>
+
+                        <div className="flex gap-1 items-center">
+                            <User size={16} />
+                            <span>
+                                Created: {patient.createdBy}
+                            </span>
+                        </div>
+
                     </div>
 
                 </div>

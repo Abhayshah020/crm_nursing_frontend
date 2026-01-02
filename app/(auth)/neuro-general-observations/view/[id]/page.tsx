@@ -17,7 +17,7 @@ export default function ViewNeuroObservation() {
         const fetchObservation = async () => {
             try {
                 const res = await axiosClient.get(`/neuro-general-observations/${id}`);
-                if (res.status === 200) setData(res.data);
+                if (res.status === 200) setData(res.data.data);
             } catch (err) {
                 console.error(err);
             }
@@ -101,17 +101,26 @@ export default function ViewNeuroObservation() {
                     </section>
 
                     {/* ================= Footer ================= */}
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground
-                    border-t border-border pt-4">
-                        <Clock size={14} />
-                        <span>
-                            Observation recorded on {new Date(data.timestamp).toLocaleString()}
-                        </span>
+                    <div className="flex items-center justify-between gap-2 text-sm text-muted-foreground pt-4 border-t">
+                        <div className="flex gap-1 items-center">
+                            <Clock size={16} />
+                            <span>
+                                Created: {new Date(data.timestamp).toLocaleString()}
+                            </span>
+                        </div>
+
+                        <div className="flex gap-1 items-center">
+                            <User size={16} />
+                            <span>
+                                Created: {data.createdBy}
+                            </span>
+                        </div>
+
                     </div>
                 </div>
 
             </PageContainer>
-            
+
         </div>
     );
 }

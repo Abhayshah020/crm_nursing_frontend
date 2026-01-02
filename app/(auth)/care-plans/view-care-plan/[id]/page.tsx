@@ -195,6 +195,7 @@ interface CarePlan {
     partnershipRoles: PartnershipRole[]
     formData: FormDataType
     createdAt: string
+    createdBy: string
 }
 
 const InfoRow = ({ label, value, icon: Icon }: { label: string; value: string | number | undefined; icon?: any }) => {
@@ -313,10 +314,14 @@ export default function ViewCarePlanPage() {
             <NavBarOfInternalPage dontShowCreate={true} title="Care Plans" subtitle="Manage and monitor patient care plans" />
 
             <div className="border-b border-border bg-card/50 backdrop-blur-sm z-10">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-center justify-between">
 
                     <Badge className={getStatusColor(carePlan.status)} variant="outline">
                         Status: {carePlan.status}
+                    </Badge>
+
+                    <Badge className={getStatusColor(carePlan.status)} variant="outline">
+                        Created By: {carePlan.createdBy}
                     </Badge>
                 </div>
             </div>

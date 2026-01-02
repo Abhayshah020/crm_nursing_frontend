@@ -42,8 +42,11 @@ export default function CreateFoodFluidIntake() {
     const handleSubmit = async (e: React.FormEvent) => {
         try {
             e.preventDefault();
-            const staffName = JSON.parse(sessionStorage.getItem("user")).name;
-            const res = await axiosClient.post("/food-fluid-intakes", { ...formData, staffName });
+            const parsed = JSON.parse(sessionStorage.getItem("user"));
+            const createdBy = parsed?.name || "Unknown Staff"
+            const createdById = parsed?.id || 0
+            const createdPerson = { createdBy, createdById }
+            const res = await axiosClient.post("/food-fluid-intakes", { ...formData, ...createdPerson });
             if (res.status === 201 || res.status === 200) {
                 showToast({
                     message: "Record created successfully",

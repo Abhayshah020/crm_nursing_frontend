@@ -49,7 +49,7 @@ export default function ViewDailyNotePage() {
                         <User className="text-primary mt-1" size={20} />
                         <div className="flex-1">
                             <p className="text-sm text-muted-foreground mb-1">Client</p>
-                            <p className="font-semibold text-lg text-foreground">{data.clientName}</p>
+                            <p className="font-semibold text-lg text-foreground">{data.patientName}</p>
                         </div>
                     </div>
                     <div className="flex items-start gap-3 p-4 bg-muted/30 rounded-xl">
@@ -63,7 +63,14 @@ export default function ViewDailyNotePage() {
                         <Clock className="text-primary mt-1" size={20} />
                         <div className="flex-1">
                             <p className="text-sm text-muted-foreground mb-1">Date</p>
-                            <p className="font-medium text-foreground">{data.timeStamps}</p>
+                            <p className="font-medium text-foreground">{data.date}</p>
+                        </div>
+                    </div>
+                    <div className="flex items-start gap-3 p-4 bg-muted/30 rounded-xl">
+                        <Clock className="text-primary mt-1" size={20} />
+                        <div className="flex-1">
+                            <p className="text-sm text-muted-foreground mb-1">Time</p>
+                            <p className="font-medium text-foreground">{data.time}</p>
                         </div>
                     </div>
                     <div className="flex items-start gap-3 p-4 bg-muted/30 rounded-xl">

@@ -77,9 +77,9 @@ export default function FoodFluidIntakeView() {
                         <p>{data.comments}</p>
                     </div>
 
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground border-t pt-4">
-                        <Clock size={16} />
-                        {new Date(data.timestamp).toLocaleString()} - <strong>{data.staffName}</strong>
+                    <div className="bg-muted/30 p-4 rounded-xl whitespace-pre-line">
+                        <strong>Created By:</strong>
+                        <p>{data.createdBy}</p>
                     </div>
                 </div>
             </PageContainer>

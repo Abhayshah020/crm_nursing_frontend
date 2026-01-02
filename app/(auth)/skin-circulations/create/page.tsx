@@ -6,6 +6,7 @@ import axiosClient from "@/lib/axiosClient";
 import Footer from "@/components/Footer";
 import { NavBarOfInternalPage } from "@/components/NavBarOfInternalPage";
 import { useToast } from "@/components/toast/ToastContext";
+import { useRouter } from "next/navigation";
 
 export default function NewSkinCirculation() {
     const [patients, setPatients] = useState<any[]>([]);
@@ -19,19 +20,7 @@ export default function NewSkinCirculation() {
         comments: "",
     });
     const { showToast } = useToast();
-
-    useEffect(() => {
-        if (typeof window !== "undefined") {
-            const user = sessionStorage.getItem("user");
-            if (user) {
-                const parsed = JSON.parse(user);
-                setFormData((prev) => ({
-                    ...prev,
-                    staffName: parsed?.name || "Unknown Staff",
-                }));
-            }
-        }
-    }, []);
+    const router = useRouter();
 
     const fetchPatients = async () => {
         try {
@@ -56,15 +45,17 @@ export default function NewSkinCirculation() {
             if (formData.patientName === "") {
                 return alert("Please fill the name of the patient!")
             }
-            const staffName = JSON.parse(sessionStorage.getItem('user')).name
+            const parsed = JSON.parse(sessionStorage.getItem("user"));
+            const createdBy = parsed?.name || "Unknown Staff"
+            const createdById = parsed?.id || 0
+            const createdPerson = { createdBy, createdById }
 
-            const res = await axiosClient.post("/skin-circulations", { ...formData, staffName });
+            const res = await axiosClient.post("/skin-circulations", { ...formData, ...createdPerson });
             if (res.status === 201 || res.status === 200) {
                 showToast({
                     message: "Skin & Circulation record created",
                     type: "success",
                 });
-                alert();
                 setFormData({
                     patientId: "",
                     patientName: "",
@@ -74,7 +65,7 @@ export default function NewSkinCirculation() {
                     capillaryRefill: "",
                     comments: "",
                 });
-                window.location.href = "/skin-circulations";
+                router.push("/skin-circulations");
             } else {
                 showToast({
                     message: "Something went wrong!",

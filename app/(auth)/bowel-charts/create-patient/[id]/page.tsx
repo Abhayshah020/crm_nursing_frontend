@@ -64,8 +64,12 @@ export default function BowelChartForm() {
             if (formData.patientName === "") {
                 return alert("Please fill the name of the patient!")
             }
-            const staffName = JSON.parse(sessionStorage.getItem("user")).name
-            const res = await axiosClient.post("/bowel-charts", { ...formData, staffName });
+            const parsed = JSON.parse(sessionStorage.getItem("user"));
+            const createdBy = parsed?.name || "Unknown Staff"
+            const createdById = parsed?.id || 0
+            const createdPerson = { createdBy, createdById }
+
+            const res = await axiosClient.post("/bowel-charts", { ...formData, ...createdPerson });
             if (res.status === 200 || res.status === 201) {
                 showToast({
                     message: "Bowel charts was success!",
