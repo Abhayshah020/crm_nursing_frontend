@@ -36,6 +36,7 @@ interface UrineMonitoringType {
     redFlags: Record<string, boolean>;
     rnGpManagerNotified: boolean;
     comments: string;
+    createdBy: string;
 }
 
 export default function UrineMonitoringView() {
