@@ -41,11 +41,16 @@ export default function UserForm({ editingUser, setEditingUser, onSuccess }: any
 
     const executeSubmit = async () => {
         try {
+            const parsed = JSON.parse(sessionStorage.getItem("user"));
+            const createdBy = parsed?.name || "Unknown Staff"
+            const createdById = parsed?.id || 0
+            const createdByPeople = { ...form, createdBy, createdById };
+
             if (editingUser) {
-                await axiosClient.put(`/users/update-users/${editingUser.id}`, form);
+                await axiosClient.put(`/users/update-users/${editingUser.id}`, createdByPeople);
                 showToast({ message: "User updated successfully!", type: "success" });
             } else {
-                await axiosClient.post("/users/create-user", form);
+                await axiosClient.post("/users/create-user", createdByPeople);
                 showToast({ message: "User created successfully!", type: "success" });
             }
 

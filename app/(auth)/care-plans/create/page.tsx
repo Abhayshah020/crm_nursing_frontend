@@ -301,19 +301,19 @@ export default function CarePlanForm() {
                 roleOfOthersInCarePlanAgreedPartnershipActions,
                 ...others
             } = formData;
-            if (patientId === "" || patientName === "") {
-                showToast({
-                    message: "Please select a client before saving the Care Plan.",
-                    type: "error",
-                });
-                return;
-            }
 
             const parsed = JSON.parse(sessionStorage.getItem("user"));
             const createdBy = parsed?.name || "Unknown Staff"
             const createdById = parsed?.id || 0
             const createdPerson = { createdBy, createdById }
 
+            if (patientId === "" || patientName === "" || createdBy === 0) {
+                showToast({
+                    message: "Please select a client before saving the Care Plan.",
+                    type: "error",
+                });
+                return;
+            }
             const res = await axiosClient.post("/care-plans", {
                 patientId,
                 patientName,
@@ -329,10 +329,10 @@ export default function CarePlanForm() {
             });
             if (res.status === 201 || res.status === 200) {
                 showToast({
-                    message: "Please select a client before saving the Care Plan.",
+                    message: "Care Plan saved successfully",
                     type: "success",
                 });
-                router.push("/care-plans")
+                router.push("/care-plans");
             } else {
                 showToast({
                     message: "Error saving Care Plan",

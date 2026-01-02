@@ -48,7 +48,7 @@ export default function ViewDailyNotePage() {
                     <div className="flex items-start gap-3 p-4 bg-muted/30 rounded-xl">
                         <User className="text-primary mt-1" size={20} />
                         <div className="flex-1">
-                            <p className="text-sm text-muted-foreground mb-1">Client</p>
+                            <p className="text-sm text-muted-foreground mb-1">Patient</p>
                             <p className="font-semibold text-lg text-foreground">{data.patientName}</p>
                         </div>
                     </div>
