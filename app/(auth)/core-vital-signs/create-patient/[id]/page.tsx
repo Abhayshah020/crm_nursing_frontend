@@ -1,12 +1,13 @@
 "use client"
 
+import { formattedDate } from "@/app/(auth)/daily-notes/create/page"
 import { NavBarOfInternalPage } from "@/components/NavBarOfInternalPage"
 import PageContainer from "@/components/PageContainer"
 import { useToast } from "@/components/toast/ToastContext"
 import axiosClient from "@/lib/axiosClient"
-import { Save, Sparkles } from "lucide-react"
+import { Clock, Save, Sparkles } from "lucide-react"
 import { useParams, useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 
 export default function CreateCoreVitalSignPage() {
     const router = useRouter()
@@ -27,12 +28,23 @@ export default function CreateCoreVitalSignPage() {
         oxygenSaturation: "",
         oxygenNote: "On Air",
         comments: "",
+        date: "",
+        time: "",
+        timestamp: ""
     });
     const { showToast } = useToast();
 
     useEffect(() => {
         fetchPatients()
     }, [])
+
+    useMemo(() => {
+        const data = formattedDate()
+        setFormData((prev) => ({
+            ...prev,
+            timestamp: data,
+        }))
+    }, []);
 
     const fetchPatients = async () => {
         try {
@@ -60,6 +72,14 @@ export default function CreateCoreVitalSignPage() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         try {
+            if (form.patientName === "" || form.date === "" || form.time === "") {
+                showToast({
+                    message: "Please fill the name of the patient, date and time!",
+                    type: "success",
+                });
+                return;
+            }
+
             const parsed = JSON.parse(sessionStorage.getItem("user"));
             const createdBy = parsed?.name || "Unknown Staff"
             const createdById = parsed?.id || 0
@@ -70,7 +90,7 @@ export default function CreateCoreVitalSignPage() {
                 message: "Core vital sign created",
                 type: "success",
             });
-            router.push("/core-vital-signs")
+            router.push(`/core-vital-signs/patients-all-notes/${id}`)
         } catch (error) {
             showToast({
                 message: "Error creating vital sign",
@@ -98,7 +118,31 @@ export default function CreateCoreVitalSignPage() {
                         />
 
                     </div>
+                    <div className="flex gap-4 items-center flex-wrap">
+                        <div className="space-y-2 flex-1">
+                            <label className="block text-sm font-medium text-foreground">Date</label>
+                            <input
+                                type="date"
+                                name="date"
+                                defaultValue={form.date}
+                                onChange={handleChange}
+                                required
+                                className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                            />
+                        </div>
 
+                        <div className="space-y-2 flex-1">
+                            <label className="block text-sm font-medium text-foreground">Times</label>
+                            <input
+                                type="time"
+                                name="time"
+                                defaultValue={form.time}
+                                onChange={handleChange}
+                                required
+                                className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                            />
+                        </div>
+                    </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <label className="block text-sm font-medium text-foreground">Temperature</label>
@@ -109,7 +153,7 @@ export default function CreateCoreVitalSignPage() {
                                 value={form.temperature}
                                 onChange={handleChange}
                                 className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:ring-2 focus:ring-primary outline-none transition-all"
-                                required
+
                             />
                             <select name="temperatureNote" value={form.temperatureNote} onChange={handleChange} className="w-full border border-border rounded-xl px-3 py-2">
                                 <option>Normal</option>
@@ -126,7 +170,7 @@ export default function CreateCoreVitalSignPage() {
                                 value={form.pulseRate}
                                 onChange={handleChange}
                                 className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:ring-2 focus:ring-primary outline-none transition-all"
-                                required
+
                             />
                             <select name="pulseNote" value={form.pulseNote} onChange={handleChange} className="w-full border border-border rounded-xl px-3 py-2">
                                 <option>Regular</option>
@@ -137,8 +181,8 @@ export default function CreateCoreVitalSignPage() {
                         <div className="space-y-2">
                             <label className="block text-sm font-medium text-foreground">Blood Pressure</label>
                             <div className="flex gap-2">
-                                <input type="number" placeholder="Systolic" name="bloodPressureSystolic" value={form.bloodPressureSystolic} onChange={handleChange} className="w-1/2 bg-background border border-border rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary outline-none transition-all" required />
-                                <input type="number" placeholder="Diastolic" name="bloodPressureDiastolic" value={form.bloodPressureDiastolic} onChange={handleChange} className="w-1/2 bg-background border border-border rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary outline-none transition-all" required />
+                                <input type="number" placeholder="Systolic" name="bloodPressureSystolic" value={form.bloodPressureSystolic} onChange={handleChange} className="w-1/2 bg-background border border-border rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary outline-none transition-all" />
+                                <input type="number" placeholder="Diastolic" name="bloodPressureDiastolic" value={form.bloodPressureDiastolic} onChange={handleChange} className="w-1/2 bg-background border border-border rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary outline-none transition-all" />
                             </div>
                             <select name="bloodPressurePosition" value={form.bloodPressurePosition} onChange={handleChange} className="w-full border border-border rounded-xl px-3 py-2">
                                 <option>Sitting</option>
@@ -148,7 +192,7 @@ export default function CreateCoreVitalSignPage() {
 
                         <div className="space-y-2">
                             <label className="block text-sm font-medium text-foreground">Respiratory Rate</label>
-                            <input type="number" name="respiratoryRate" value={form.respiratoryRate} onChange={handleChange} className="w-full bg-background border border-border rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary outline-none transition-all" required />
+                            <input type="number" name="respiratoryRate" value={form.respiratoryRate} onChange={handleChange} className="w-full bg-background border border-border rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary outline-none transition-all" />
                             <select name="respiratoryNote" value={form.respiratoryNote} onChange={handleChange} className="w-full border border-border rounded-xl px-3 py-2">
                                 <option>Normal</option>
                                 <option>Laboured</option>
@@ -157,7 +201,7 @@ export default function CreateCoreVitalSignPage() {
 
                         <div className="space-y-2">
                             <label className="block text-sm font-medium text-foreground">Oxygen Saturation</label>
-                            <input type="number" name="oxygenSaturation" value={form.oxygenSaturation} onChange={handleChange} className="w-full bg-background border border-border rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary outline-none transition-all" required />
+                            <input type="number" name="oxygenSaturation" value={form.oxygenSaturation} onChange={handleChange} className="w-full bg-background border border-border rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary outline-none transition-all" />
                             <select name="oxygenNote" value={form.oxygenNote} onChange={handleChange} className="w-full border border-border rounded-xl px-3 py-2">
                                 <option>On Air</option>
                                 <option>On O₂</option>
@@ -176,13 +220,8 @@ export default function CreateCoreVitalSignPage() {
                         />
                     </div>
 
-                    <button
-                        type="submit"
-                        className="flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-xl hover:bg-primary/90 transition-all shadow-md hover:shadow-lg font-medium group"
-                    >
-                        <Save size={18} className="group-hover:scale-110 transition-transform" />
-                        Save Vitals
-                        <Sparkles size={14} className="ml-1 opacity-70" />
+                    <button type="submit" className="flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-xl">
+                        <Save size={18} /> Save Record <Sparkles size={14} />
                     </button>
                 </form>
             </PageContainer>

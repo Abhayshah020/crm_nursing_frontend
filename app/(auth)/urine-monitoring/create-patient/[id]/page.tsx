@@ -1,13 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import PageContainer from "@/components/PageContainer";
 import axiosClient from "@/lib/axiosClient";
 import Footer from "@/components/Footer";
 import { NavBarOfInternalPage } from "@/components/NavBarOfInternalPage";
 import { useParams } from "next/navigation";
 import { useToast } from "@/components/toast/ToastContext";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
+import { formattedDate } from "@/app/(auth)/daily-notes/create/page";
+import { Save, Sparkles } from "lucide-react";
 
 const initialFormData = {
     patientId: "",
@@ -56,6 +58,9 @@ const initialFormData = {
     },
     rnGpManagerNotified: false,
     comments: "",
+    timestamp: '',
+    date: "",
+    time: "",
 };
 export default function UrineMonitoringForm() {
     const { id } = useParams<{ id: string }>();
@@ -81,7 +86,13 @@ export default function UrineMonitoringForm() {
     useEffect(() => {
         fetchPatients();
     }, []);
-
+    useMemo(() => {
+        const data = formattedDate()
+        setFormData((prev) => ({
+            ...prev,
+            timestamp: data,
+        }))
+    }, []);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value, type, dataset } = e.target;
@@ -102,8 +113,11 @@ export default function UrineMonitoringForm() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            if (formData.patientName === "") {
-                alert("Please fill the name of the patient");
+            if (formData.date === "" || formData.time === "" || formData.patientName === "") {
+                showToast({
+                    message: "Please fill the data for patient name, date and time.",
+                    type: "error",
+                });
                 return;
             }
             const staffName = JSON.parse(sessionStorage.getItem("user")).name
@@ -114,7 +128,7 @@ export default function UrineMonitoringForm() {
                     type: "success",
                 });
                 setFormData(initialFormData);
-                router.push("/urine-monitoring");
+                router.push(`/urine-monitoring/patients-all-notes/${id}`);
             }
         } catch (err) {
             showToast({
@@ -158,6 +172,31 @@ export default function UrineMonitoringForm() {
                             </div>
                         </div>
                     </section>
+                    <div className="flex gap-4 items-center flex-wrap">
+                        <div className="space-y-2 flex-1">
+                            <label className="block text-sm font-medium text-foreground">Date</label>
+                            <input
+                                type="date"
+                                name="date"
+                                defaultValue={formData.date}
+                                onChange={handleChange}
+                                required
+                                className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                            />
+                        </div>
+
+                        <div className="space-y-2 flex-1">
+                            <label className="block text-sm font-medium text-foreground">Time</label>
+                            <input
+                                type="time"
+                                name="time"
+                                defaultValue={formData.time}
+                                onChange={handleChange}
+                                required
+                                className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                            />
+                        </div>
+                    </div>
 
                     {/* ================= Reason for Charting ================= */}
                     <section className="bg-muted/30 rounded-2xl p-5 space-y-3">
@@ -329,15 +368,9 @@ export default function UrineMonitoringForm() {
                     </section>
 
                     {/* ================= Submit ================= */}
-                    <div className="flex justify-end pt-4">
-                        <button
-                            type="submit"
-                            className="bg-primary text-primary-foreground px-8 py-3 rounded-xl
-                       font-medium shadow-md hover:shadow-lg hover:bg-primary/90 transition-all"
-                        >
-                            Save Record
-                        </button>
-                    </div>
+                    <button type="submit" className="flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-xl">
+                        <Save size={18} /> Save Record <Sparkles size={14} />
+                    </button>
                 </form>
             </PageContainer>
 

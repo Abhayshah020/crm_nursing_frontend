@@ -36,7 +36,8 @@ export default function CoreVitalSignsTablePage() {
                     },
                 });
                 setRecords(res.data.data);
-                setTotalPages(res.data.total);
+                setTotalPages(res.data.page);
+
             } catch (error) {
                 showToast({
                     message: "Something went wrong!",
@@ -67,7 +68,7 @@ export default function CoreVitalSignsTablePage() {
                                 <th className="p-4 font-semibold">BP</th>
                                 <th className="p-4 font-semibold">Resp</th>
                                 <th className="p-4 font-semibold">O₂ Sat</th>
-                                <th className="p-4 font-semibold">Timestamp</th>
+                                <th className="p-4 font-semibold">Date</th>
                                 <th className="p-4 font-semibold">Actions</th>
                             </tr>
                         </thead>
@@ -80,7 +81,7 @@ export default function CoreVitalSignsTablePage() {
                                     <td className="p-4 text-muted-foreground">{v.bloodPressureSystolic}/{v.bloodPressureDiastolic} ({v.bloodPressurePosition})</td>
                                     <td className="p-4 text-muted-foreground">{v.respiratoryRate} ({v.respiratoryNote})</td>
                                     <td className="p-4 text-muted-foreground">{v.oxygenSaturation} ({v.oxygenNote})</td>
-                                    <td className="p-4 text-center text-muted-foreground">{new Date(v.timestamp).toLocaleString()}</td>
+                                    <td className="p-4 text-center text-muted-foreground">{v.date}</td>
                                     <td className="p-4">
                                         <div className="flex gap-3 justify-center">
                                             <Link

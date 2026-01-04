@@ -1,15 +1,17 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import axiosClient from "@/lib/axiosClient"
 import PageContainer from "@/components/PageContainer"
 import Footer from "@/components/Footer"
 import { NavBarOfInternalPage } from "@/components/NavBarOfInternalPage"
 import { useToast } from "@/components/toast/ToastContext"
 import { useRouter } from "next/navigation"
+import { formattedDate } from "../../daily-notes/create/page"
+import { Save, Sparkles } from "lucide-react"
 
 export default function CreatePainComfortAssessmentPage() {
-    const [form, setForm] = useState({
+    const [formData, setFormData] = useState({
         patientId: "",
         patientName: "",
         painScore: "",
@@ -18,6 +20,9 @@ export default function CreatePainComfortAssessmentPage() {
         painManagementRequired: "No",
         actionTaken: "",
         comments: "",
+        timestamp: '',
+        date: "",
+        time: "",
     });
     const { showToast } = useToast();
     const router = useRouter()
@@ -35,25 +40,42 @@ export default function CreatePainComfortAssessmentPage() {
         }
     };
 
+    useMemo(() => {
+        const data = formattedDate()
+        setFormData((prev) => ({
+            ...prev,
+            timestamp: data,
+        }))
+    }, []);
+
     useEffect(() => {
         fetchPatients();
     }, []);
 
     const handleChange = (e: any) => {
-        setForm({ ...form, [e.target.name]: e.target.value })
+        setFormData({ ...formData, [e.target.name]: e.target.value })
     }
 
     const handleSubmit = async (e: any) => {
         try {
+            e.preventDefault()
+
+            if (formData.date === "" || formData.time === "" || formData.patientName === "") {
+                showToast({
+                    message: "Please fill the data for patient name, date and time.",
+                    type: "error",
+                });
+                return;
+            }
+
             const parsed = JSON.parse(sessionStorage.getItem("user"));
             const createdBy = parsed?.name || "Unknown Staff"
             const createdById = parsed?.id || 0
             const createdPerson = { createdBy, createdById }
-            e.preventDefault()
             await axiosClient.post("/pain-comfort-assessments", {
-                ...form,
-                painScore: Number(form.painScore),
-                patientId: Number(form.patientId),
+                ...formData,
+                painScore: Number(formData.painScore),
+                patientId: Number(formData.patientId),
                 ...createdPerson
             })
             showToast({
@@ -85,13 +107,13 @@ export default function CreatePainComfortAssessmentPage() {
                         </label>
                         <select
                             name="patientName"
-                            value={form.patientName}
+                            value={formData.patientName}
                             onChange={() => {
                                 const selectedPatient = patients.find(
                                     (p) => p.name === (document.getElementsByName("patientName")[0] as HTMLSelectElement).value
                                 );
-                                setForm({
-                                    ...form,
+                                setFormData({
+                                    ...formData,
                                     patientName: selectedPatient ? selectedPatient.name : "",
                                     patientId: selectedPatient ? selectedPatient.id : "",
                                 });
@@ -107,6 +129,33 @@ export default function CreatePainComfortAssessmentPage() {
                         </select>
                     </div>
 
+                    <div className="flex gap-4 items-center flex-wrap">
+                        <div className="space-y-2 flex-1">
+                            <label className="block text-sm font-medium text-foreground">Date</label>
+                            <input
+                                type="date"
+                                name="date"
+                                defaultValue={formData.date}
+                                onChange={handleChange}
+                                required
+                                className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                            />
+                        </div>
+
+                        <div className="space-y-2 flex-1">
+                            <label className="block text-sm font-medium text-foreground">Times</label>
+                            <input
+                                type="time"
+                                name="time"
+                                defaultValue={formData.time}
+                                onChange={handleChange}
+                                required
+                                className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                            />
+                        </div>
+                    </div>
+
+
                     {/* Pain Score */}
                     <div className="space-y-2">
                         <label className="block text-sm font-medium text-foreground">
@@ -117,7 +166,7 @@ export default function CreatePainComfortAssessmentPage() {
                             min={0}
                             max={10}
                             name="painScore"
-                            value={form.painScore}
+                            value={formData.painScore}
                             onChange={handleChange}
                             placeholder="Enter pain score"
                             className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
@@ -132,7 +181,7 @@ export default function CreatePainComfortAssessmentPage() {
                         <input
                             type="text"
                             name="painLocation"
-                            value={form.painLocation}
+                            value={formData.painLocation}
                             onChange={handleChange}
                             placeholder="e.g. Lower back, knee, chest"
                             className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
@@ -146,7 +195,7 @@ export default function CreatePainComfortAssessmentPage() {
                         </label>
                         <select
                             name="painDescription"
-                            value={form.painDescription}
+                            value={formData.painDescription}
                             onChange={handleChange}
                             className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
                         >
@@ -165,7 +214,7 @@ export default function CreatePainComfortAssessmentPage() {
                         </label>
                         <select
                             name="painManagementRequired"
-                            value={form.painManagementRequired}
+                            value={formData.painManagementRequired}
                             onChange={handleChange}
                             className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
                         >
@@ -182,7 +231,7 @@ export default function CreatePainComfortAssessmentPage() {
                         <input
                             type="text"
                             name="actionTaken"
-                            value={form.actionTaken}
+                            value={formData.actionTaken}
                             onChange={handleChange}
                             placeholder="Medication, repositioning, escalation, etc."
                             className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
@@ -197,7 +246,7 @@ export default function CreatePainComfortAssessmentPage() {
                         <textarea
                             rows={4}
                             name="comments"
-                            value={form.comments}
+                            value={formData.comments}
                             onChange={handleChange}
                             placeholder="Additional observations or notes..."
                             className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all resize-none"
@@ -205,11 +254,8 @@ export default function CreatePainComfortAssessmentPage() {
                     </div>
 
                     {/* Submit */}
-                    <button
-                        type="submit"
-                        className="flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-xl hover:bg-primary/90 transition-all shadow-md hover:shadow-lg font-medium group"
-                    >
-                        Save Assessment
+                    <button type="submit" className="flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-xl">
+                        <Save size={18} /> Save Record <Sparkles size={14} />
                     </button>
                 </form>
             </PageContainer>

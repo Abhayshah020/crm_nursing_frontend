@@ -16,6 +16,7 @@ export default function PainComfortAssessmentListPage() {
     const [deleteId, setDeleteId] = useState<number | null>(null);
     const [userExist, setUserExist] = useState<any>(null);
     const { showToast } = useToast();
+    const [itemsPerPage, setItemsPerPage] = useState(5);
 
     const handlePrevPage = () => {
         if (currentPage > 1) setCurrentPage(currentPage - 1);
@@ -27,8 +28,14 @@ export default function PainComfortAssessmentListPage() {
 
     const fetchRecords = async () => {
         try {
-            const res = await axiosClient.get("/pain-comfort-assessments")
+            const res = await axiosClient.get("/pain-comfort-assessments", {
+                params: {
+                    page: currentPage,
+                    limit: itemsPerPage,
+                },
+            });
             setAssessments(res.data.data)
+            setTotalPages(res.data.page);
 
         } catch (error) {
             showToast({
@@ -113,7 +120,7 @@ export default function PainComfortAssessmentListPage() {
                                     </td>
 
                                     <td className="p-4 text-center text-muted-foreground">
-                                        {new Date(a.timestamp).toLocaleDateString()}
+                                        {a.date}
                                     </td>
 
                                     <td className="p-4">

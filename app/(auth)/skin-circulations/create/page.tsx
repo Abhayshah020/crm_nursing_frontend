@@ -1,12 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import PageContainer from "@/components/PageContainer";
 import axiosClient from "@/lib/axiosClient";
 import Footer from "@/components/Footer";
 import { NavBarOfInternalPage } from "@/components/NavBarOfInternalPage";
 import { useToast } from "@/components/toast/ToastContext";
 import { useRouter } from "next/navigation";
+import { formattedDate } from "../../daily-notes/create/page";
+import { Save, Sparkles } from "lucide-react";
 
 export default function NewSkinCirculation() {
     const [patients, setPatients] = useState<any[]>([]);
@@ -18,6 +20,9 @@ export default function NewSkinCirculation() {
         skinIntegrityIssues: "Nil",
         capillaryRefill: "<2 sec",
         comments: "",
+        timestamp: '',
+        date: "",
+        time: "",
     });
     const { showToast } = useToast();
     const router = useRouter();
@@ -31,6 +36,14 @@ export default function NewSkinCirculation() {
         }
     };
 
+    useMemo(() => {
+        const data = formattedDate()
+        setFormData((prev) => ({
+            ...prev,
+            timestamp: data,
+        }))
+    }, []);
+
     useEffect(() => {
         fetchPatients();
     }, []);
@@ -42,8 +55,12 @@ export default function NewSkinCirculation() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            if (formData.patientName === "") {
-                return alert("Please fill the name of the patient!")
+            if (formData.date === "" || formData.time === "" || formData.patientName === "") {
+                showToast({
+                    message: "Please fill the data for patient name, date and time.",
+                    type: "error",
+                });
+                return;
             }
             const parsed = JSON.parse(sessionStorage.getItem("user"));
             const createdBy = parsed?.name || "Unknown Staff"
@@ -56,15 +73,7 @@ export default function NewSkinCirculation() {
                     message: "Skin & Circulation record created",
                     type: "success",
                 });
-                setFormData({
-                    patientId: "",
-                    patientName: "",
-                    skinColour: "",
-                    skinTemperature: "",
-                    skinIntegrityIssues: "",
-                    capillaryRefill: "",
-                    comments: "",
-                });
+
                 router.push("/skin-circulations");
             } else {
                 showToast({
@@ -143,6 +152,32 @@ export default function NewSkinCirculation() {
                                 </option>
                             ))}
                         </select>
+                    </div>
+
+                    <div className="flex gap-4 items-center flex-wrap">
+                        <div className="space-y-2 flex-1">
+                            <label className="block text-sm font-medium text-foreground">Date</label>
+                            <input
+                                type="date"
+                                name="date"
+                                defaultValue={formData.date}
+                                onChange={handleChange}
+                                required
+                                className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                            />
+                        </div>
+
+                        <div className="space-y-2 flex-1">
+                            <label className="block text-sm font-medium text-foreground">Time</label>
+                            <input
+                                type="time"
+                                name="time"
+                                defaultValue={formData.time}
+                                onChange={handleChange}
+                                required
+                                className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                            />
+                        </div>
                     </div>
 
                     {/* Skin Assessment */}
@@ -251,25 +286,9 @@ export default function NewSkinCirculation() {
                         />
                     </div>
 
-                    <div className="flex justify-end pt-4">
-                        <button
-                            type="submit"
-                            className="
-        inline-flex items-center gap-2
-        rounded-xl
-        bg-primary
-        px-6 py-3
-        text-sm font-semibold text-primary-foreground
-        shadow-md
-        hover:bg-primary/90
-        hover:shadow-lg
-        active:scale-[0.98]
-        transition-all
-      "
-                        >
-                            Save Record
-                        </button>
-                    </div>
+                    <button type="submit" className="flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-xl">
+                        <Save size={18} /> Save Record <Sparkles size={14} />
+                    </button>
                 </form>
 
             </PageContainer>

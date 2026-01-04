@@ -55,8 +55,8 @@ export default function ViewPainComfortAssessmentPage() {
                             <p className="text-lg font-bold text-foreground">{data.painScore}/10</p>
                         </div>
                         <div className="bg-muted/30 p-4 rounded-xl flex items-center gap-2">
-                            <MapPin className="text-primary" size={18} />
-                            <span className="text-foreground">{data.painLocation}</span>
+                            <User className="text-primary" size={18} />
+                            <span className="text-foreground">{data.painLocation || "-"}</span>
                         </div>
                     </div>
 
@@ -75,16 +75,33 @@ export default function ViewPainComfortAssessmentPage() {
                     {/* Action Taken */}
                     <div className="bg-muted/30 p-4 rounded-xl">
                         <p className="text-sm text-muted-foreground mb-1">Action Taken</p>
-                        <p className="text-foreground font-medium">{data.actionTaken}</p>
+                        <p className="text-foreground font-medium">{data.actionTaken || "-"}</p>
                     </div>
 
                     {/* Comments */}
                     <div className="bg-muted/30 p-4 rounded-xl whitespace-pre-line">
                         <p className="text-sm text-muted-foreground mb-1">Comments</p>
-                        <p className="text-foreground leading-relaxed">{data.comments}</p>
+                        <p className="text-foreground leading-relaxed">{data.comments || "-"}</p>
                     </div>
 
-                    {/* Timestamp */}
+                    <div className="flex gap-3">
+                        <div className="flex-1 flex items-start gap-3 p-4 bg-muted/30 rounded-xl">
+                            <Clock className="text-primary mt-1" size={20} />
+                            <div className="flex-1">
+                                <p className="text-sm text-muted-foreground mb-1">Date</p>
+                                <p className="font-medium text-foreground">{data.date}</p>
+                            </div>
+                        </div>
+                        <div className="flex-1 flex items-start gap-3 p-4 bg-muted/30 rounded-xl">
+                            <Clock className="text-primary mt-1" size={20} />
+                            <div className="flex-1">
+                                <p className="text-sm text-muted-foreground mb-1">Time</p>
+                                <p className="font-medium text-foreground">{data.time}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* ================= Footer ================= */}
                     <div className="flex items-center justify-between gap-2 text-sm text-muted-foreground pt-4 border-t">
                         <div className="flex gap-1 items-center">
                             <Clock size={16} />

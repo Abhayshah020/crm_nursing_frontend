@@ -26,6 +26,7 @@ interface UrineMonitoringType {
     continenceStatus: string;
     catheterType: string;
     rnGpManagerNotified: boolean;
+    date: string
 }
 
 export default function UrineMonitoringTable() {
@@ -56,7 +57,7 @@ export default function UrineMonitoringTable() {
                     },
                 });
                 setRecords(res.data.data);
-                setTotalPages(res.data.total);
+                setTotalPages(res.data.page);
             } catch (err) {
                 console.error("Error fetching urine monitoring records:", err);
             }
@@ -85,7 +86,7 @@ export default function UrineMonitoringTable() {
                                 <th className="px-4 font-semibold py-2 border-b">Frequency</th>
                                 <th className="px-4 font-semibold py-2 border-b">Fluid Intake (ml)</th>
                                 <th className="px-4 font-semibold py-2 border-b">Urine Output (ml)</th>
-                                <th className="px-4 font-semibold py-2 border-b">Timestamp</th>
+                                <th className="px-4 font-semibold py-2 border-b">Date</th>
                                 <th className="px-4 font-semibold py-2 border-b">Actions</th>
                             </tr>
                         </thead>
@@ -98,7 +99,7 @@ export default function UrineMonitoringTable() {
                                     <td className="px-4 py-2 border-b">{r.frequency || "N/A"}</td>
                                     <td className="px-4 py-2 border-b">{r.totalFluidIntake ?? 0}</td>
                                     <td className="px-4 py-2 border-b">{r.totalUrineOutput ?? 0}</td>
-                                    <td className="px-4 py-2 border-b">{new Date(r.timestamp).toLocaleString()}</td>
+                                    <td className="px-4 py-2 border-b">{r.date}</td>
                                     <td className="px-4 py-2 border-b">
                                         <div className="flex gap-3 justify-center">
                                             <Link

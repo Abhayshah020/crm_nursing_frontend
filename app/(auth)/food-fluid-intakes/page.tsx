@@ -16,6 +16,7 @@ export default function FoodFluidIntakeList() {
     const { showToast } = useToast();
     const [deleteId, setDeleteId] = useState<number | null>(null);
     const [userExist, setUserExist] = useState<any>(null);
+    const [itemsPerPage, setItemsPerPage] = useState(5);
 
     const handlePrevPage = () => {
         if (currentPage > 1) setCurrentPage(currentPage - 1);
@@ -27,8 +28,14 @@ export default function FoodFluidIntakeList() {
 
     const fetchRecords = async () => {
         try {
-            const res = await axiosClient.get("/food-fluid-intakes");
+            const res = await axiosClient.get("/food-fluid-intakes", {
+                params: {
+                    page: currentPage,
+                    limit: itemsPerPage,
+                },
+            });
             if (res.status === 200) {
+                setTotalPages(res.data.page);
                 setIntakes(res.data.data); // adjust if your API returns differently
             }
         } catch (err) {
@@ -42,7 +49,7 @@ export default function FoodFluidIntakeList() {
 
     useEffect(() => {
         fetchRecords()
-    }, []);
+    }, [currentPage]);
 
     useEffect(() => {
         if (typeof window === "undefined") return;
@@ -106,7 +113,7 @@ export default function FoodFluidIntakeList() {
                                     <td className="p-4 text-center">{i.inputFluidsMl}</td>
                                     <td className="p-4">{i.foodDescription.slice(0, 50)}...</td>
                                     <td className="p-4 text-center">{i.totalFluid}</td>
-                                    <td className="p-4 text-center">{new Date(i.timestamp).toLocaleDateString()}</td>
+                                    <td className="p-4 text-center">{i.date}</td>
                                     <td className="p-4">
                                         <div className="flex gap-3 justify-center">
                                             <Link

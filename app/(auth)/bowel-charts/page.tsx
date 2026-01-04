@@ -14,6 +14,7 @@ export default function BowelChartTable() {
     const [records, setRecords] = useState<any[]>([]);
     const [totalPages, setTotalPages] = useState(1);
     const [userExist, setUserExist] = useState<any>(null);
+    const [itemsPerPage, setItemsPerPage] = useState(5);
     const { showToast } = useToast();
     const [deleteId, setDeleteId] = useState<number | null>(null);
 
@@ -27,7 +28,13 @@ export default function BowelChartTable() {
 
     const fetchRecords = async () => {
         try {
-            const res = await axiosClient.get("/bowel-charts");
+            const res = await axiosClient.get("/bowel-charts", {
+                params: {
+                    page: currentPage,
+                    limit: itemsPerPage,
+                },
+            });
+            setTotalPages(res.data.page);
             setRecords(res.data.data);
         } catch (err) {
             showToast({
@@ -38,7 +45,7 @@ export default function BowelChartTable() {
     };
     useEffect(() => {
         fetchRecords();
-    }, []);
+    }, [currentPage]);
 
 
     useEffect(() => {
@@ -106,7 +113,7 @@ export default function BowelChartTable() {
                                     </td>
                                     <td className="p-3 text-center">{r.bowelMotion ? "Yes" : "No"}</td>
                                     <td className="p-3 text-center">{r.bristolType}</td>
-                                    <td className="p-3 text-center">{new Date(r.timestamp).toLocaleDateString()}</td>
+                                    <td className="p-3 text-center">{r.date}</td>
                                     <td className="p-3 text-center">
                                         <div className="flex gap-3 justify-center">
                                             <Link

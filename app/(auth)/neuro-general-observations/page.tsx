@@ -28,8 +28,16 @@ export default function NeuroObservationsTable() {
     };
     const fetchRecords = async () => {
         try {
-            const res = await axiosClient.get("/neuro-general-observations");
-            if (res.status === 200) setObservations(res.data.data);
+            const res = await axiosClient.get("/neuro-general-observations", {
+                params: {
+                    page: currentPage,
+                    limit: itemsPerPage,
+                },
+            });
+            if (res.status === 200) {
+                setTotalPages(res.data.page);
+                setObservations(res.data.data);
+            }
         } catch (err) {
             console.error(err);
         }
@@ -37,7 +45,7 @@ export default function NeuroObservationsTable() {
 
     useEffect(() => {
         fetchRecords();
-    }, []);
+    }, [currentPage]);
 
 
     useEffect(() => {
@@ -104,7 +112,7 @@ export default function NeuroObservationsTable() {
                                     <td className="p-3 text-center">{obs.orientation}</td>
                                     <td className="p-3 text-center">{obs.speech}</td>
                                     <td className="p-3 text-center">{obs.pupils}</td>
-                                    <td className="p-3 text-center">{new Date(obs.timestamp).toLocaleDateString()}</td>
+                                    <td className="p-3 text-center">{obs.date}</td>
                                     <td className="p-4">
                                         <div className="flex gap-3 justify-center">
                                             <Link

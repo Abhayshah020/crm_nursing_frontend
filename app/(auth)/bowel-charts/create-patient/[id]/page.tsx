@@ -1,18 +1,19 @@
 "use client";
 
+import { formattedDate } from "@/app/(auth)/daily-notes/create/page";
 import { NavBarOfInternalPage } from "@/components/NavBarOfInternalPage";
 import PageContainer from "@/components/PageContainer";
 import { useToast } from "@/components/toast/ToastContext";
 import axiosClient from "@/lib/axiosClient";
-import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Save, Sparkles } from "lucide-react";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 export const dynamic = "force-dynamic"; // ✅ prevent prerender
 
 export default function BowelChartForm() {
     const { showToast } = useToast();
     const { id } = useParams<{ id: string }>();
-
-    const [patients, setPatients] = useState<any[]>([]);
+    const router = useRouter()
     const [formData, setFormData] = useState({
         patientId: "",
         patientName: "",
@@ -25,7 +26,19 @@ export default function BowelChartForm() {
         incompleteEmptying: false,
         unusualOdour: false,
         comments: "",
+        date: "",
+        time: "",
+        timestamp: "",
     });
+
+
+    useMemo(() => {
+        const data = formattedDate()
+        setFormData((prev) => ({
+            ...prev,
+            timestamp: data,
+        }))
+    }, []);
 
     useEffect(() => {
         const fetchPatients = async () => {
@@ -59,8 +72,12 @@ export default function BowelChartForm() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            if (formData.patientName === "") {
-                return alert("Please fill the name of the patient!")
+            if (formData.patientName === "" || formData.date === "" || formData.time === "") {
+                showToast({
+                    message: "Please fill the name of the patient, date and time!",
+                    type: "success",
+                });
+                return;
             }
             const parsed = JSON.parse(sessionStorage.getItem("user"));
             const createdBy = parsed?.name || "Unknown Staff"
@@ -85,8 +102,11 @@ export default function BowelChartForm() {
                     incompleteEmptying: false,
                     unusualOdour: false,
                     comments: "",
+                    date: "",
+                    time: "",
+                    timestamp: "",
                 });
-                window.location.href = "/bowel-charts";
+                router.push(`/bowel-charts/patients-all-notes/${id}`);
             }
         } catch (error) {
             showToast({
@@ -118,6 +138,31 @@ export default function BowelChartForm() {
 
                     </div>
 
+                    <div className="flex gap-4 items-center flex-wrap">
+                        <div className="space-y-2 flex-1">
+                            <label className="block text-sm font-medium text-foreground">Date</label>
+                            <input
+                                type="date"
+                                name="date"
+                                defaultValue={formData.date}
+                                onChange={handleChange}
+                                required
+                                className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                            />
+                        </div>
+
+                        <div className="space-y-2 flex-1">
+                            <label className="block text-sm font-medium text-foreground">Times</label>
+                            <input
+                                type="time"
+                                name="time"
+                                defaultValue={formData.time}
+                                onChange={handleChange}
+                                required
+                                className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                            />
+                        </div>
+                    </div>
                     <div className="grid sm:grid-cols-2 gap-4">
                         <label className="flex items-center gap-2">
                             <input type="checkbox" name="bowelMotion" checked={formData.bowelMotion} onChange={handleChange} />
@@ -192,11 +237,9 @@ export default function BowelChartForm() {
                         />
                     </div>
 
-                    <button
-                        type="submit"
-                        className="flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-xl hover:bg-primary/90 transition-all shadow-md font-medium"
-                    >
-                        Save Record
+
+                    <button type="submit" className="flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-xl">
+                        <Save size={18} /> Save Record <Sparkles size={14} />
                     </button>
                 </form>
             </PageContainer>

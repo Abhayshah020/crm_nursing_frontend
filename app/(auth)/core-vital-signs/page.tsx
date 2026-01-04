@@ -12,10 +12,10 @@ import { useEffect, useState } from "react"
 
 export default function CoreVitalSignsTablePage() {
     const [vitals, setVitals] = useState<any[]>([])
-    const [page, setPage] = useState(1)
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const { showToast } = useToast();
+    const [itemsPerPage, setItemsPerPage] = useState(5);
     const router = useRouter();
     const [deleteId, setDeleteId] = useState<number | null>(null);
     const [userExist, setUserExist] = useState<any>(null);
@@ -31,9 +31,13 @@ export default function CoreVitalSignsTablePage() {
     const fetchRecords = async () => {
         try {
             const res = await axiosClient.get("/core-vital-signs", {
-                params: { page, limit: 10 },
-            })
+                params: {
+                    page: currentPage,
+                    limit: itemsPerPage,
+                },
+            });
             if (res.status === 200 || res.status === 201) {
+                setTotalPages(res.data.page);
                 setVitals(res.data.data)
             } else {
                 showToast({
@@ -51,7 +55,7 @@ export default function CoreVitalSignsTablePage() {
 
     useEffect(() => {
         fetchRecords()
-    }, [page])
+    }, [currentPage])
 
     useEffect(() => {
         if (typeof window === "undefined") return;
@@ -103,25 +107,25 @@ export default function CoreVitalSignsTablePage() {
                         <thead className="bg-muted/50 text-foreground border-b border-border">
                             <tr>
                                 <th className="p-4 text-left font-semibold">Patient</th>
-                                <th className="p-4 font-semibold">Temp</th>
-                                <th className="p-4 font-semibold">Pulse</th>
-                                <th className="p-4 font-semibold">BP</th>
-                                <th className="p-4 font-semibold">Resp</th>
-                                <th className="p-4 font-semibold">O₂ Sat</th>
-                                <th className="p-4 font-semibold">Timestamp</th>
+                                <th className="p-4 text-left font-semibold">Temp</th>
+                                <th className="p-4 text-left font-semibold">Pulse</th>
+                                <th className="p-4 text-left font-semibold">BP</th>
+                                <th className="p-4 text-left font-semibold">Resp</th>
+                                <th className="p-4 text-left font-semibold">O₂ Sat</th>
+                                <th className="p-4 text-left font-semibold">Date</th>
                                 <th className="p-4 font-semibold">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {vitals.map((v) => (
                                 <tr key={v.id} className="border-b border-border hover:bg-muted/30 transition-colors">
-                                    <td className="p-4 font-medium text-foreground">{v.patientName}</td>
-                                    <td className="p-4 text-muted-foreground">{v.temperature} ({v.temperatureNote})</td>
-                                    <td className="p-4 text-muted-foreground">{v.pulseRate} ({v.pulseNote})</td>
-                                    <td className="p-4 text-muted-foreground">{v.bloodPressureSystolic}/{v.bloodPressureDiastolic} ({v.bloodPressurePosition})</td>
-                                    <td className="p-4 text-muted-foreground">{v.respiratoryRate} ({v.respiratoryNote})</td>
-                                    <td className="p-4 text-muted-foreground">{v.oxygenSaturation} ({v.oxygenNote})</td>
-                                    <td className="p-4 text-center text-muted-foreground">{new Date(v.timestamp).toLocaleString()}</td>
+                                    <td className="p-4 text-left font-medium text-foreground">{v.patientName}</td>
+                                    <td className="p-4 text-left text-muted-foreground">{v.temperature} ({v.temperatureNote})</td>
+                                    <td className="p-4 text-left text-muted-foreground">{v.pulseRate} ({v.pulseNote})</td>
+                                    <td className="p-4 text-left text-muted-foreground">{v.bloodPressureSystolic}/{v.bloodPressureDiastolic} ({v.bloodPressurePosition})</td>
+                                    <td className="p-4 text-left text-muted-foreground">{v.respiratoryRate} ({v.respiratoryNote})</td>
+                                    <td className="p-4 text-left text-muted-foreground">{v.oxygenSaturation} ({v.oxygenNote})</td>
+                                    <td className="p-4 text-left text-center text-muted-foreground">{v.date}</td>
                                     <td className="p-4">
                                         <div className="flex gap-3 justify-center">
                                             <Link

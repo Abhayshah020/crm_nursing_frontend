@@ -1,5 +1,6 @@
 "use client"
 
+import { formattedDate } from "@/app/(auth)/daily-notes/create/page"
 import { useToast } from "@/components/toast/ToastContext"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -15,6 +16,7 @@ import {
     CheckCircle2,
     ChevronLeft,
     ChevronRight,
+    Clock,
     Droplet,
     Ear,
     Eye,
@@ -32,7 +34,7 @@ import {
     Utensils,
 } from "lucide-react"
 import { useParams, useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 
 type FormDataType = {
     patientId: string
@@ -149,7 +151,10 @@ type FormDataType = {
         clientOrAdvocateInformed: boolean
         carePlanUpdated: boolean
         supervisorName: string
-    }
+    },
+    date: string,
+    time: string,
+    timestamp: any,
 }
 
 export default function CarePlanForm() {
@@ -266,7 +271,18 @@ export default function CarePlanForm() {
             carePlanUpdated: false,
             supervisorName: "",
         },
+        date: "",
+        time: "",
+        timestamp: "",
     })
+
+    useMemo(() => {
+        const data = formattedDate()
+        setFormData((prev) => ({
+            ...prev,
+            timestamp: data,
+        }))
+    }, []);
 
     const fetchPatients = async () => {
         try {
@@ -293,6 +309,14 @@ export default function CarePlanForm() {
     const handleNext = () => setStep(step + 1)
     const handlePrev = () => setStep(step - 1)
 
+    const handleChange = (e: any) => {
+        const { name, value, type, checked } = e.target;
+        setFormData({
+            ...formData,
+            [name]: type === "checkbox" ? checked : value,
+        });
+    };
+
     const handleSubmit = async () => {
         try {
             const {
@@ -303,21 +327,23 @@ export default function CarePlanForm() {
                 medicalDoctorContactNumber,
                 chronicDiseases,
                 roleOfOthersInCarePlanAgreedPartnershipActions,
+                date,
+                time,
+                timestamp,
                 ...others
             } = formData;
-
+            if (formData.patientName === "" || formData.date === "" || formData.time === "") {
+                showToast({
+                    message: "Please fill the name of the patient, date and time!",
+                    type: "success",
+                });
+                return;
+            }
             const parsed = JSON.parse(sessionStorage.getItem("user"));
             const createdBy = parsed?.name || "Unknown Staff"
             const createdById = parsed?.id || 0
             const createdPerson = { createdBy, createdById }
 
-            if (patientId === "" || patientName === "" || createdBy === 0) {
-                showToast({
-                    message: "Please select a client before saving the Care Plan.",
-                    type: "error",
-                });
-                return;
-            }
             const res = await axiosClient.post("/care-plans", {
                 patientId,
                 patientName,
@@ -329,6 +355,9 @@ export default function CarePlanForm() {
                 partnershipRoles: roleOfOthersInCarePlanAgreedPartnershipActions,
                 formData: others,
                 status,
+                date,
+                time,
+                timestamp,
                 ...createdPerson
             });
             if (res.status === 201 || res.status === 200) {
@@ -336,7 +365,7 @@ export default function CarePlanForm() {
                     message: "Care Plan saved successfully",
                     type: "success",
                 });
-                router.push("/care-plans");
+                router.push(`/care-plans/patients-all-notes/${id}`);
             } else {
                 showToast({
                     message: "Error saving Care Plan",
@@ -414,7 +443,7 @@ export default function CarePlanForm() {
                                             <User className="w-5 h-5 text-blue-600" />
                                         </div>
                                         <div>
-                                            <CardTitle>Client Information</CardTitle>
+                                            <CardTitle>Patients Information</CardTitle>
                                             <CardDescription>Basic information about the client</CardDescription>
                                         </div>
                                     </div>
@@ -424,22 +453,45 @@ export default function CarePlanForm() {
                                         <div className="space-y-2">
                                             <Label htmlFor="clientName" className="text-sm font-medium flex items-center gap-2">
                                                 <User className="w-4 h-4 text-blue-600" />
-                                                Client Name
+                                                Patients Name
                                             </Label>
                                             <input
                                                 id="clientName"
                                                 value={formData.patientName}
-                                                // onChange={(e) => {
-                                                //     const selectedPatient = patients.find((patient) => patient.name === e.target.value);
-                                                //     setFormData((prev) => ({
-                                                //         ...prev,
-                                                //         patientName: e.target.value,
-                                                //         patientId: selectedPatient ? selectedPatient.id : "",
-                                                //     }));
-                                                // }}
                                                 readOnly
                                                 className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
                                             />
+                                        </div>
+                                        <div className="flex gap-4 items-center flex-wrap">
+                                            <div className="space-y-2 flex-1">
+                                                <Label htmlFor="clientName" className="text-sm font-medium flex items-center gap-2">
+                                                    <Clock className="w-4 h-4 text-blue-600" />
+                                                    Date
+                                                </Label>
+                                                <input
+                                                    type="date"
+                                                    name="date"
+                                                    defaultValue={formData.date}
+                                                    onChange={handleChange}
+                                                    required
+                                                    className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                                                />
+                                            </div>
+
+                                            <div className="space-y-2 flex-1">
+                                                <Label htmlFor="clientName" className="text-sm font-medium flex items-center gap-2">
+                                                    <Clock className="w-4 h-4 text-blue-600" />
+                                                    Time
+                                                </Label>
+                                                <input
+                                                    type="time"
+                                                    name="time"
+                                                    defaultValue={formData.time}
+                                                    onChange={handleChange}
+                                                    className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                                                    required
+                                                />
+                                            </div>
                                         </div>
 
                                         <div className="space-y-2">

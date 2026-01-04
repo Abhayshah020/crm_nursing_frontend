@@ -36,7 +36,7 @@ export default function SkinCirculationList() {
                     },
                 });
                 setRecords(res.data.data);
-                setTotalPages(res.data.total);
+                setTotalPages(res.data.page);
             } catch (err) {
                 console.error(err);
             }
@@ -78,7 +78,7 @@ export default function SkinCirculationList() {
                                     <td className="p-3 text-center">{r.skinColour}</td>
                                     <td className="p-3 text-center">{r.skinTemperature}</td>
                                     <td className="p-3 text-center">{r.capillaryRefill}</td>
-                                    <td className="p-3 text-center">{new Date(r.timestamp).toLocaleDateString()}</td>
+                                    <td className="p-3 text-center">{r.date}</td>
                                     <td className="p-3 text-center">
                                         <Link href={`/skin-circulations/view/${r.id}`} className="text-primary hover:text-primary/80 p-2 rounded-lg">
                                             <Eye size={18} />

@@ -59,30 +59,38 @@ export default function ViewDailyNotePage() {
                             <p className="whitespace-pre-line text-foreground leading-relaxed">{data.notes}</p>
                         </div>
                     </div>
-                    <div className="flex items-start gap-3 p-4 bg-muted/30 rounded-xl">
-                        <Clock className="text-primary mt-1" size={20} />
-                        <div className="flex-1">
-                            <p className="text-sm text-muted-foreground mb-1">Date</p>
-                            <p className="font-medium text-foreground">{data.date}</p>
+                    <div className="flex gap-3">
+                        <div className="flex-1 flex items-start gap-3 p-4 bg-muted/30 rounded-xl">
+                            <Clock className="text-primary mt-1" size={20} />
+                            <div className="flex-1">
+                                <p className="text-sm text-muted-foreground mb-1">Date</p>
+                                <p className="font-medium text-foreground">{data.date}</p>
+                            </div>
+                        </div>
+                        <div className="flex-1 flex items-start gap-3 p-4 bg-muted/30 rounded-xl">
+                            <Clock className="text-primary mt-1" size={20} />
+                            <div className="flex-1">
+                                <p className="text-sm text-muted-foreground mb-1">Time</p>
+                                <p className="font-medium text-foreground">{data.time}</p>
+                            </div>
                         </div>
                     </div>
-                    <div className="flex items-start gap-3 p-4 bg-muted/30 rounded-xl">
-                        <Clock className="text-primary mt-1" size={20} />
-                        <div className="flex-1">
-                            <p className="text-sm text-muted-foreground mb-1">Time</p>
-                            <p className="font-medium text-foreground">{data.time}</p>
+                    {/* ================= Footer ================= */}
+                    <div className="flex items-center justify-between gap-2 text-sm text-muted-foreground pt-4 border-t">
+                        <div className="flex gap-1 items-center">
+                            <Clock size={16} />
+                            <span>
+                                Time Stamp: {new Date(data.timestamp).toLocaleString()}
+                            </span>
                         </div>
-                    </div>
-                    <div className="flex items-start gap-3 p-4 bg-muted/30 rounded-xl">
-                        <Clock className="text-primary mt-1" size={20} />
-                        <div className="flex-1">
-                            <p className="text-sm text-muted-foreground mb-1">Created By</p>
-                            <p className="font-medium text-foreground">{data.createdBy}</p>
+
+                        <div className="flex gap-1 items-center">
+                            <User size={16} />
+                            <span>
+                                Created: {data.createdBy}
+                            </span>
                         </div>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground pt-4 border-t border-border">
-                        <Clock size={16} />
-                        <span>Created: {new Date(data.createdAt).toLocaleString()}</span>
+
                     </div>
                 </div>
             </PageContainer>

@@ -38,7 +38,8 @@ export default function NeuroObservationsTable() {
                     },
                 });
                 setRecords(res.data.data);
-                setTotalPages(res.data.total);
+                setTotalPages(res.data.page);
+
             } catch (err) {
                 showToast({
                     message: "Something went wrong!",
@@ -83,7 +84,7 @@ export default function NeuroObservationsTable() {
                                     <td className="p-3 text-center">{obs.orientation}</td>
                                     <td className="p-3 text-center">{obs.speech}</td>
                                     <td className="p-3 text-center">{obs.pupils}</td>
-                                    <td className="p-3 text-center">{new Date(obs.timestamp).toLocaleDateString()}</td>
+                                    <td className="p-3 text-center">{obs.date}</td>
                                     <td className="p-4">
                                         <div className="flex gap-3 justify-center">
                                             <Link

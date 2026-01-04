@@ -15,6 +15,7 @@ import {
     CheckCircle2,
     ChevronLeft,
     ChevronRight,
+    Clock,
     Droplet,
     Ear,
     Eye,
@@ -32,7 +33,8 @@ import {
     Utensils,
 } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
+import { formattedDate } from "../../daily-notes/create/page"
 
 type FormDataType = {
     patientId: string
@@ -149,7 +151,10 @@ type FormDataType = {
         clientOrAdvocateInformed: boolean
         carePlanUpdated: boolean
         supervisorName: string
-    }
+    },
+    date: string,
+    time: string,
+    timestamp: string
 }
 
 export default function CarePlanForm() {
@@ -265,8 +270,20 @@ export default function CarePlanForm() {
             carePlanUpdated: false,
             supervisorName: "",
         },
+        date: "",
+        time: "",
+        timestamp: ""
     })
     const [patients, setPatients] = useState([]);
+
+
+    useMemo(() => {
+        const data = formattedDate()
+        setFormData((prev) => ({
+            ...prev,
+            timestamp: data,
+        }))
+    }, []);
 
     const fetchPatients = async () => {
         try {
@@ -286,6 +303,14 @@ export default function CarePlanForm() {
         fetchPatients();
     }, []);
 
+    const handleChange = (e: any) => {
+        const { name, value, type, checked } = e.target;
+        setFormData({
+            ...formData,
+            [name]: type === "checkbox" ? checked : value,
+        });
+    };
+
     const handleNext = () => setStep(step + 1)
     const handlePrev = () => setStep(step - 1)
 
@@ -299,21 +324,24 @@ export default function CarePlanForm() {
                 medicalDoctorContactNumber,
                 chronicDiseases,
                 roleOfOthersInCarePlanAgreedPartnershipActions,
+                date,
+                time,
+                timestamp,
                 ...others
             } = formData;
+            if (formData.patientName === "" || formData.date === "" || formData.time === "") {
+                showToast({
+                    message: "Please fill the name of the patient, date and time!",
+                    type: "success",
+                });
+                return;
+            }
 
             const parsed = JSON.parse(sessionStorage.getItem("user"));
             const createdBy = parsed?.name || "Unknown Staff"
             const createdById = parsed?.id || 0
             const createdPerson = { createdBy, createdById }
 
-            if (patientId === "" || patientName === "" || createdBy === 0) {
-                showToast({
-                    message: "Please select a client before saving the Care Plan.",
-                    type: "error",
-                });
-                return;
-            }
             const res = await axiosClient.post("/care-plans", {
                 patientId,
                 patientName,
@@ -325,6 +353,9 @@ export default function CarePlanForm() {
                 partnershipRoles: roleOfOthersInCarePlanAgreedPartnershipActions,
                 formData: others,
                 status,
+                date,
+                time,
+                timestamp,
                 ...createdPerson
             });
             if (res.status === 201 || res.status === 200) {
@@ -410,7 +441,7 @@ export default function CarePlanForm() {
                                             <User className="w-5 h-5 text-blue-600" />
                                         </div>
                                         <div>
-                                            <CardTitle>Client Information</CardTitle>
+                                            <CardTitle>Patients Information</CardTitle>
                                             <CardDescription>Basic information about the client</CardDescription>
                                         </div>
                                     </div>
@@ -420,7 +451,7 @@ export default function CarePlanForm() {
                                         <div className="space-y-2">
                                             <Label htmlFor="clientName" className="text-sm font-medium flex items-center gap-2">
                                                 <User className="w-4 h-4 text-blue-600" />
-                                                Client Name
+                                                Patients Name
                                             </Label>
                                             <select
                                                 id="clientName"
@@ -442,6 +473,37 @@ export default function CarePlanForm() {
                                                     </option>
                                                 ))}
                                             </select>
+                                        </div>
+                                        <div className="flex gap-4 items-center flex-wrap">
+                                            <div className="space-y-2 flex-1">
+                                                <Label htmlFor="clientName" className="text-sm font-medium flex items-center gap-2">
+                                                    <Clock className="w-4 h-4 text-blue-600" />
+                                                    Date
+                                                </Label>
+                                                <input
+                                                    type="date"
+                                                    name="date"
+                                                    defaultValue={formData.date}
+                                                    onChange={handleChange}
+                                                    required
+                                                    className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                                                />
+                                            </div>
+
+                                            <div className="space-y-2 flex-1">
+                                                <Label htmlFor="clientName" className="text-sm font-medium flex items-center gap-2">
+                                                    <Clock className="w-4 h-4 text-blue-600" />
+                                                    Time
+                                                </Label>
+                                                <input
+                                                    type="time"
+                                                    name="time"
+                                                    defaultValue={formData.time}
+                                                    onChange={handleChange}
+                                                    className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                                                    required
+                                                />
+                                            </div>
                                         </div>
 
                                         <div className="space-y-2">
@@ -2953,7 +3015,7 @@ export default function CarePlanForm() {
                                 disabled={step === 1}
                                 variant="outline"
                                 size="lg"
-                                className="min-w-[120px] bg-transparent"
+                                className="cursor-pointer min-w-[120px] bg-transparent"
                             >
                                 <ChevronLeft className="w-4 h-4" />
                                 Previous
@@ -2964,7 +3026,7 @@ export default function CarePlanForm() {
                                     <button
                                         key={s.number}
                                         onClick={() => setStep(s.number)}
-                                        className={`w-2 h-2 rounded-full transition-all ${s.number === step ? "bg-blue-600 w-6" : s.number < step ? "bg-blue-300" : "bg-gray-300"
+                                        className={`w-2 cursor-pointer h-2 rounded-full transition-all ${s.number === step ? "bg-blue-600 w-6" : s.number < step ? "bg-blue-300" : "bg-gray-300"
                                             }`}
                                         aria-label={`Go to step ${s.number}`}
                                     />
@@ -2975,7 +3037,7 @@ export default function CarePlanForm() {
                                 <Button
                                     onClick={handleNext}
                                     size="lg"
-                                    className="min-w-[120px] bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+                                    className="cursor-pointer min-w-[120px] bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
                                 >
                                     Next
                                     <ChevronRight className="w-4 h-4" />

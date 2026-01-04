@@ -11,11 +11,11 @@ import { useEffect, useState } from "react"
 
 export default function DailyNotesTablePage() {
     const [notes, setNotes] = useState<any[]>([])
-    const [page, setPage] = useState(1)
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [deleteId, setDeleteId] = useState<number | null>(null);
     const [userExist, setUserExist] = useState<any>(null);
+    const [itemsPerPage, setItemsPerPage] = useState(5);
 
     const handlePrevPage = () => {
         if (currentPage > 1) setCurrentPage(currentPage - 1);
@@ -29,9 +29,13 @@ export default function DailyNotesTablePage() {
     const fetchRecords = async () => {
         try {
             const res = await axiosClient.get("/daily-notes", {
-                params: { page, limit: 10 },
+                params: {
+                    page: currentPage,
+                    limit: itemsPerPage,
+                },
             });
             if (res.status === 200 || res.status === 201) {
+                setTotalPages(res.data.page);
                 setNotes(res.data.data);
             } else {
                 showToast({
@@ -49,7 +53,7 @@ export default function DailyNotesTablePage() {
 
     useEffect(() => {
         fetchRecords()
-    }, [page])
+    }, [currentPage])
 
     useEffect(() => {
         if (typeof window === "undefined") return;
@@ -96,7 +100,7 @@ export default function DailyNotesTablePage() {
                     <table className="w-full text-sm">
                         <thead className="bg-muted/50 text-foreground border-b border-border">
                             <tr>
-                                <th className="p-4 text-left font-semibold">Client</th>
+                                <th className="p-4 text-left font-semibold">Patient</th>
                                 <th className="p-4 font-semibold">Date</th>
                                 <th className="p-4 font-semibold">Notes</th>
                                 <th className="p-4 font-semibold">Created</th>
@@ -107,7 +111,7 @@ export default function DailyNotesTablePage() {
                             {notes.map((note) => (
                                 <tr key={note.id} className="border-b border-border hover:bg-muted/30 transition-colors">
                                     <td className="p-4 font-medium text-foreground">{note.patientName}</td>
-                                    <td className="p-4 text-center text-muted-foreground">{note.timeStamps}</td>
+                                    <td className="p-4 text-center text-muted-foreground">{note.date}</td>
                                     <td className="p-4 text-muted-foreground">{note.notes.slice(0, 40)}...</td>
                                     <td className="p-4 text-center text-muted-foreground">
                                         {new Date(note.createdAt).toLocaleDateString()}

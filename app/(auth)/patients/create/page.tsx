@@ -17,6 +17,8 @@ export default function CreatePatientPage() {
         age: "",
         address: "",
         details: {},
+        date: "",
+        time: "",
     });
     const { showToast } = useToast();
 
@@ -38,6 +40,13 @@ export default function CreatePatientPage() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (formData.date === "" || formData.time === "" || formData.name === "") {
+            showToast({
+                message: "Please fill the data for patient name, date and time.",
+                type: "error",
+            });
+            return;
+        }
 
         try {
             const payload = new FormData();
@@ -47,13 +56,15 @@ export default function CreatePatientPage() {
             payload.append("age", formData.age);
             payload.append("address", formData.address);
             payload.append("details", JSON.stringify(formData.details));
-            
+
             const parsed = JSON.parse(sessionStorage.getItem("user"));
             const createdBy = parsed?.name || "Unknown Staff"
             const createdById = parsed?.id || 0
-            
+
             payload.append("createdBy", createdBy);
             payload.append("createdById", createdById);
+            payload.append("date", formData.date);
+            payload.append("time", formData.time);
 
             if (patientImage) {
                 payload.append("patientImage", patientImage);
@@ -132,14 +143,41 @@ export default function CreatePatientPage() {
                             className="w-full bg-background border border-border rounded-xl px-4 py-3"
                         />
                     </div>
+                    <div className="flex gap-4 items-center flex-wrap">
+                        <div className="space-y-2 flex-1">
+                            <label className="block text-sm font-medium text-foreground">Admission Date</label>
+                            <input
+                                type="date"
+                                name="date"
+                                defaultValue={formData.date}
+                                onChange={handleChange}
+                                required
+                                className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                            />
+                        </div>
 
+                        <div className="space-y-2 flex-1">
+                            <label className="block text-sm font-medium text-foreground">Admission Time</label>
+                            <input
+                                type="time"
+                                name="time"
+                                defaultValue={formData.time}
+                                onChange={handleChange}
+                                required
+                                className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                            />
+                        </div>
+                    </div>
                     {/* Contact */}
                     <div className="space-y-2">
-                        <label className="block text-sm font-medium text-foreground">
-                            Contact
+                        <label className="flex gap-2 block text-sm font-medium text-foreground">
+                            Contact <p className="text-gray-500">(Only accept numbers [0-9])</p>
                         </label>
                         <input
                             name="contact"
+                            type="text"
+                            inputMode="numeric"
+                            pattern="[0-9]*"
                             value={formData.contact}
                             onChange={handleChange}
                             placeholder="Enter phone number"
@@ -164,12 +202,14 @@ export default function CreatePatientPage() {
 
                     {/* Age */}
                     <div className="space-y-2">
-                        <label className="block text-sm font-medium text-foreground">
-                            Age
+                        <label className="flex gap-2 block text-sm font-medium text-foreground">
+                            Age <p className="text-gray-500">(min:30 & max: 130)</p>
                         </label>
                         <input
                             name="age"
                             type="number"
+                            min={30}
+                            max={130}
                             value={formData.age}
                             onChange={handleChange}
                             placeholder="Enter age"
@@ -193,13 +233,8 @@ export default function CreatePatientPage() {
                     </div>
 
                     {/* Submit */}
-                    <button
-                        type="submit"
-                        className="flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-xl hover:bg-primary/90 transition-all shadow-md hover:shadow-lg font-medium group"
-                    >
-                        <Save size={18} className="group-hover:scale-110 transition-transform" />
-                        Save Patient
-                        <Sparkles size={14} className="ml-1 opacity-70" />
+                    <button type="submit" className="flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-xl">
+                        <Save size={18} /> Save Record <Sparkles size={14} />
                     </button>
                 </form>
             </PageContainer>

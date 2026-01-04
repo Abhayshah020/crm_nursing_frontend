@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import PageContainer from "@/components/PageContainer";
 import { Save, Sparkles } from "lucide-react";
 import axiosClient from "@/lib/axiosClient";
@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 import { NavBarOfInternalPage } from "@/components/NavBarOfInternalPage";
 import { useToast } from "@/components/toast/ToastContext";
 import { useParams, useRouter } from "next/navigation";
+import { formattedDate } from "@/app/(auth)/daily-notes/create/page";
 
 export const dynamic = "force-dynamic"; // ✅ prevent prerender
 
@@ -26,9 +27,21 @@ export default function NewGeneralHygieneCare() {
         denturesCleaned: false,
         bedBath: false,
         comments: "",
+        timestamp: '',
+        date: "",
+        time: "",
     });
     const { showToast } = useToast();
     const router = useRouter();
+
+    useMemo(() => {
+        const data = formattedDate()
+        setFormData((prev) => ({
+            ...prev,
+            timestamp: data,
+        }))
+    }, []);
+
     useEffect(() => {
         const fetchPatients = async () => {
             try {
@@ -60,6 +73,15 @@ export default function NewGeneralHygieneCare() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
+
+            if (formData.date === "" || formData.time === "" || formData.patientName === "") {
+                showToast({
+                    message: "Please fill the data for patient name, date and time.",
+                    type: "error",
+                });
+                return;
+            }
+
             const parsed = JSON.parse(sessionStorage.getItem("user"));
             const createdBy = parsed?.name || "Unknown Staff"
             const createdById = parsed?.id || 0
@@ -71,7 +93,7 @@ export default function NewGeneralHygieneCare() {
                     message: "Record created successfully",
                     type: "success",
                 });
-                router.push("/general-hygiene-care");
+                router.push(`/general-hygiene-care/patients-all-notes/${id}`);
             }
         } catch (err) {
             showToast({
@@ -93,11 +115,37 @@ export default function NewGeneralHygieneCare() {
                     <div>
                         <label className="block text-sm font-medium">Patient Name</label>
                         <input
-                            value={formData.patientName}
+                            defaultValue={formData.patientName}
                             readOnly
                             className="w-full bg-background border rounded-xl px-4 py-3"
                         />
 
+                    </div>
+
+                    <div className="flex gap-4 items-center flex-wrap">
+                        <div className="space-y-2 flex-1">
+                            <label className="block text-sm font-medium text-foreground">Date</label>
+                            <input
+                                type="date"
+                                name="date"
+                                defaultValue={formData.date}
+                                onChange={handleChange}
+                                required
+                                className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                            />
+                        </div>
+
+                        <div className="space-y-2 flex-1">
+                            <label className="block text-sm font-medium text-foreground">Times</label>
+                            <input
+                                type="time"
+                                name="time"
+                                defaultValue={formData.time}
+                                onChange={handleChange}
+                                required
+                                className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                            />
+                        </div>
                     </div>
 
                     <div className="grid sm:grid-cols-3 gap-4">
@@ -117,7 +165,7 @@ export default function NewGeneralHygieneCare() {
                                     checked={formData[field as keyof typeof formData] as boolean}
                                     onChange={handleChange}
                                 />
-                                {field.replace(/([A-Z])/g, " $1")}
+                                <p className="capitalize">{field.replace(/([A-Z])/g, " $1")}</p>
                             </label>
                         ))}
                     </div>

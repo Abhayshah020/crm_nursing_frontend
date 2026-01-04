@@ -22,6 +22,7 @@ import {
     Users,
     CheckCircle2,
     XCircle,
+    Clock,
 } from "lucide-react"
 import AppNavbar from "@/components/AppNavbar"
 import Footer from "@/components/Footer"
@@ -196,6 +197,9 @@ interface CarePlan {
     formData: FormDataType
     createdAt: string
     createdBy: string
+    date: string
+    time: string
+    timestamp: any
 }
 
 const InfoRow = ({ label, value, icon: Icon }: { label: string; value: string | number | undefined; icon?: any }) => {
@@ -339,6 +343,9 @@ export default function ViewCarePlanPage() {
                             <InfoRow label="Next of Kin Contact" value={carePlan.nextOfKinContactNumber} icon={Phone} />
                             <InfoRow label="Care Plan Developed" value={carePlan.carePlanDevelopedDate} icon={Calendar} />
                             <InfoRow label="Next Review Date" value={carePlan.nextCarePlanReviewDate} icon={Calendar} />
+                            <InfoRow label="Care Plan Created Date" value={carePlan.date} icon={Clock} />
+                            <InfoRow label="Care Plan Created Time" value={carePlan.time} icon={Clock} />
+                            <InfoRow label="Timestamp" value={new Date(carePlan.timestamp).toLocaleString()} icon={Clock} />
                         </div>
                     </SectionCard>
 
@@ -1010,7 +1017,7 @@ export default function ViewCarePlanPage() {
                 </div>
             </div>
 
-            
+
         </div>
     )
 }

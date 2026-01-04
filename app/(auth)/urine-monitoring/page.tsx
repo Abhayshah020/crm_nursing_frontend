@@ -27,16 +27,17 @@ interface UrineMonitoringType {
     continenceStatus: string;
     catheterType: string;
     rnGpManagerNotified: boolean;
+    date: string
 }
 
 export default function UrineMonitoringTable() {
     const [records, setRecords] = useState<UrineMonitoringType[]>([]);
-    const [itemsPerPage, setItemsPerPage] = useState(5);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [deleteId, setDeleteId] = useState<number | null>(null);
     const [userExist, setUserExist] = useState<any>(null);
     const { showToast } = useToast();
+    const [itemsPerPage, setItemsPerPage] = useState(5);
 
     const handlePrevPage = () => {
         if (currentPage > 1) setCurrentPage(currentPage - 1);
@@ -48,9 +49,15 @@ export default function UrineMonitoringTable() {
 
     const fetchRecords = async () => {
         try {
-            const res = await axiosClient.get("/urine-monitoring");
+            const res = await axiosClient.get("/urine-monitoring", {
+                params: {
+                    page: currentPage,
+                    limit: itemsPerPage,
+                },
+            });
             if (res.status === 200) {
                 setRecords(res.data.data);
+                setTotalPages(res.data.page);
             }
         } catch (err) {
             console.error("Error fetching urine monitoring records:", err);
@@ -111,7 +118,7 @@ export default function UrineMonitoringTable() {
                                 <th className="px-4 font-semibold py-2 border-b">Frequency</th>
                                 <th className="px-4 font-semibold py-2 border-b">Fluid Intake (ml)</th>
                                 <th className="px-4 font-semibold py-2 border-b">Urine Output (ml)</th>
-                                <th className="px-4 font-semibold py-2 border-b">Timestamp</th>
+                                <th className="px-4 font-semibold py-2 border-b">Date</th>
                                 <th className="px-4 font-semibold py-2 border-b">Actions</th>
                             </tr>
                         </thead>
@@ -124,7 +131,7 @@ export default function UrineMonitoringTable() {
                                     <td className="px-4 py-2 border-b">{r.frequency || "N/A"}</td>
                                     <td className="px-4 py-2 border-b">{r.totalFluidIntake ?? 0}</td>
                                     <td className="px-4 py-2 border-b">{r.totalUrineOutput ?? 0}</td>
-                                    <td className="px-4 py-2 border-b">{new Date(r.timestamp).toLocaleString()}</td>
+                                    <td className="px-4 py-2 border-b">{r.date}</td>
                                     <td className="px-4 py-2 border-b">
                                         <div className="flex gap-3 justify-center">
                                             <Link

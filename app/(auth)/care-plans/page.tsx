@@ -31,8 +31,14 @@ export default function CarePlansTablePage() {
 
     const fetchRecords = async () => {
         try {
-            const res = await axiosClient.get("/care-plans");
+            const res = await axiosClient.get("/care-plans", {
+                params: {
+                    page: currentPage,
+                    limit: itemsPerPage,
+                },
+            });
             let data = res.data;
+            setTotalPages(res.data.page);
 
             setCarePlans(data.data);
         } catch (err) {
@@ -99,9 +105,9 @@ export default function CarePlansTablePage() {
                         <thead className="bg-muted/50 text-foreground border-b border-border">
                             <tr>
                                 <th className="p-4 text-left font-semibold">Patient</th>
-                                <th className="p-4 font-semibold">DOB</th>
-                                <th className="p-4 font-semibold">Medical Doctor</th>
-                                <th className="p-4 font-semibold">Status</th>
+                                <th className="p-4 text-left font-semibold">DOB</th>
+                                <th className="p-4 text-left font-semibold">Medical Doctor</th>
+                                <th className="p-4 text-left font-semibold">Status</th>
                                 <th className="p-4 font-semibold">Actions</th>
                             </tr>
                         </thead>
@@ -109,9 +115,9 @@ export default function CarePlansTablePage() {
                             {carePlans.map((cp) => (
                                 <tr key={cp.id} className="border-b border-border hover:bg-muted/30 transition-colors">
                                     <td className="p-4 font-medium text-foreground">{cp.patientName}</td>
-                                    <td className="p-4 text-center text-muted-foreground">{new Date(cp.dateOfBirth).toLocaleDateString()}</td>
-                                    <td className="p-4 text-muted-foreground">{cp.medicalDoctorName}</td>
-                                    <td className="p-4 text-center text-muted-foreground">
+                                    <td className="p-4 text-left text-muted-foreground">{cp.dateOfBirth || '-'}</td>
+                                    <td className="p-4 text-left text-muted-foreground">{cp.medicalDoctorName || '-'}</td>
+                                    <td className="p-4 text-left text-muted-foreground">
                                         <span
                                             className={`px-2 py-1 rounded-full text-xs font-medium ${cp.status === "active" ? "bg-emerald-50 text-emerald-700" : "bg-gray-100 text-gray-600"
                                                 }`}

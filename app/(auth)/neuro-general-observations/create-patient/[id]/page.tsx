@@ -1,11 +1,13 @@
 "use client";
 
+import { formattedDate } from "@/app/(auth)/daily-notes/create/page";
 import { NavBarOfInternalPage } from "@/components/NavBarOfInternalPage";
 import PageContainer from "@/components/PageContainer";
 import { useToast } from "@/components/toast/ToastContext";
 import axiosClient from "@/lib/axiosClient";
+import { Save, Sparkles } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export default function CreateNeuroObservation() {
     const [patients, setPatients] = useState<any[]>([]);
@@ -17,10 +19,21 @@ export default function CreateNeuroObservation() {
         speech: "Clear",
         pupils: "Equal",
         comments: "",
+        timestamp: '',
+        date: "",
+        time: "",
     });
     const { showToast } = useToast();
     const router = useRouter();
     const { id } = useParams<{ id: string }>();
+
+    useMemo(() => {
+        const data = formattedDate()
+        setFormData((prev) => ({
+            ...prev,
+            timestamp: data,
+        }))
+    }, []);
 
     useEffect(() => {
         fetchPatients();
@@ -51,15 +64,12 @@ export default function CreateNeuroObservation() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const {
-                patientId,
-                patientName,
-            } = formData;
-            if (
-                patientId === "" ||
-                patientName === ""
-            ) {
-                return alert("Please fill all the form data.");
+            if (formData.date === "" || formData.time === "" || formData.patientName === "") {
+                showToast({
+                    message: "Please fill the data for patient name, date and time.",
+                    type: "error",
+                });
+                return;
             }
             const parsed = JSON.parse(sessionStorage.getItem("user"));
             const createdBy = parsed?.name || "Unknown Staff"
@@ -73,16 +83,7 @@ export default function CreateNeuroObservation() {
                     message: "Observation created",
                     type: "success",
                 });
-                setFormData({
-                    patientId: "",
-                    patientName: "",
-                    levelOfConsciousness: "",
-                    orientation: "",
-                    speech: "",
-                    pupils: "",
-                    comments: "",
-                });
-                router.push("/neuro-general-observations");
+                router.push(`/neuro-general-observations/patients-all-notes/${id}`);
             } else {
                 showToast({
                     message: "Something went wrong!",
@@ -147,6 +148,31 @@ export default function CreateNeuroObservation() {
                                 transition
                             "
                         />
+                    </div>
+                    <div className="flex gap-4 items-center flex-wrap">
+                        <div className="space-y-2 flex-1">
+                            <label className="block text-sm font-medium text-foreground">Date</label>
+                            <input
+                                type="date"
+                                name="date"
+                                defaultValue={formData.date}
+                                onChange={handleChange}
+                                required
+                                className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                            />
+                        </div>
+
+                        <div className="space-y-2 flex-1">
+                            <label className="block text-sm font-medium text-foreground">Times</label>
+                            <input
+                                type="time"
+                                name="time"
+                                defaultValue={formData.time}
+                                onChange={handleChange}
+                                required
+                                className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                            />
+                        </div>
                     </div>
 
                     {/* Observation Grid */}
@@ -239,25 +265,9 @@ export default function CreateNeuroObservation() {
                     </div>
 
                     {/* Action */}
-                    <div className="flex justify-end pt-4">
-                        <button
-                            type="submit"
-                            className="
-        inline-flex items-center justify-center
-        rounded-xl
-        bg-primary
-        px-6 py-3
-        text-sm font-semibold text-white
-        shadow-md
-        hover:bg-primary/90
-        hover:shadow-lg
-        active:scale-[0.98]
-        transition-all
-      "
-                        >
-                            Save Observation
-                        </button>
-                    </div>
+                    <button type="submit" className="flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-xl">
+                        <Save size={18} /> Save Record <Sparkles size={14} />
+                    </button>
                 </form>
 
             </PageContainer>

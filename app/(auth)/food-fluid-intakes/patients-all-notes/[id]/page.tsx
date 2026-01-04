@@ -37,7 +37,8 @@ export default function FoodFluidIntakeList() {
                     },
                 });
                 setRecords(res.data.data);
-                setTotalPages(res.data.total);
+                setTotalPages(res.data.page);
+
             } catch (err) {
                 showToast({
                     message: "Something went wrong!",
@@ -82,7 +83,7 @@ export default function FoodFluidIntakeList() {
                                     <td className="p-4 text-center">{i.inputFluidsMl}</td>
                                     <td className="p-4">{i.foodDescription.slice(0, 50)}...</td>
                                     <td className="p-4 text-center">{i.totalFluid}</td>
-                                    <td className="p-4 text-center">{new Date(i.timestamp).toLocaleDateString()}</td>
+                                    <td className="p-4 text-center">{i.date}</td>
                                     <td className="p-4">
                                         <div className="flex gap-3 justify-center">
                                             <Link

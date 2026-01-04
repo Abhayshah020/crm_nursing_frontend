@@ -14,7 +14,6 @@ export default function GeneralHygieneCareList() {
     const [itemsPerPage, setItemsPerPage] = useState(5);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
-    const [filter, setFilter] = useState("");
     const [deleteId, setDeleteId] = useState<number | null>(null);
     const [userExist, setUserExist] = useState<any>(null);
     const { showToast } = useToast();
@@ -29,15 +28,23 @@ export default function GeneralHygieneCareList() {
 
     const fetchRecords = async () => {
         try {
-            const res = await axiosClient.get("/general-hygiene-care");
-            if (res.status === 200) setRecords(res.data.data);
+            const res = await axiosClient.get("/general-hygiene-care", {
+                params: {
+                    page: currentPage,
+                    limit: itemsPerPage,
+                },
+            });
+            if (res.status === 200) {
+                setRecords(res.data.data);
+                setTotalPages(res.data.page);
+            }
         } catch (err) {
             console.error(err);
         }
     };
     useEffect(() => {
         fetchRecords();
-    }, []);
+    }, [currentPage]);
 
     useEffect(() => {
         if (typeof window === "undefined") return;
@@ -99,11 +106,11 @@ export default function GeneralHygieneCareList() {
                                     <td className="p-3">
                                         {r.patientName}
                                     </td>
-                                    <td className="p-3 text-center">{r.sponge ? "Done" : ""}</td>
-                                    <td className="p-3 text-center">{r.shower ? "Done" : ""}</td>
-                                    <td className="p-3 text-center">{r.hairWash ? "Done" : ""}</td>
-                                    <td className="p-3 text-center">{r.oralCare ? "Done" : ""}</td>
-                                    <td className="p-3 text-center">{new Date(r.timestamp).toLocaleDateString()}</td>
+                                    <td className="p-3 text-center">{r.sponge ? "Sponged" : "-"}</td>
+                                    <td className="p-3 text-center">{r.shower ? "Showered" : "-"}</td>
+                                    <td className="p-3 text-center">{r.hairWash ? "Hair Washed" : "-"}</td>
+                                    <td className="p-3 text-center">{r.oralCare ? "Oral Cared" : "-"}</td>
+                                    <td className="p-3 text-center">{r.date}</td>
                                     <td className="p-4">
                                         <div className="flex gap-3 justify-center">
                                             <Link

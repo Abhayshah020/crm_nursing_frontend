@@ -36,8 +36,7 @@ export default function DailyNotesTablePage() {
                     },
                 });
                 setRecords(res.data.data);
-                setTotalPages(res.data.total);
-
+                setTotalPages(res.data.page);
             } catch (error) {
                 showToast({
                     message: "Something went wrong!",
@@ -76,7 +75,7 @@ export default function DailyNotesTablePage() {
                             {records.map((record) => (
                                 <tr key={record.id} className="border-b border-border hover:bg-muted/30 transition-colors">
                                     <td className="p-4 font-medium text-foreground">{record.patientName}</td>
-                                    <td className="p-4 text-center text-muted-foreground">{record.timeStamps}</td>
+                                    <td className="p-4 text-center text-muted-foreground">{record.date}</td>
                                     <td className="p-4 text-muted-foreground">{record.notes.slice(0, 40)}...</td>
                                     <td className="p-4 text-center text-muted-foreground">
                                         {new Date(record.createdAt).toLocaleDateString()}

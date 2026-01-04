@@ -41,7 +41,7 @@ export default function GeneralHygieneCareList() {
             }
         };
         fetchRecords();
-    }, [currentPage, itemsPerPage])
+    }, [currentPage])
 
     return (
         <div className="flex flex-col min-h-screen">
@@ -72,11 +72,11 @@ export default function GeneralHygieneCareList() {
                                     <td className="p-3">
                                         {r.patientName}
                                     </td>
-                                    <td className="p-3 text-center">{r.sponge ? "Done" : ""}</td>
-                                    <td className="p-3 text-center">{r.shower ? "Done" : ""}</td>
-                                    <td className="p-3 text-center">{r.hairWash ? "Done" : ""}</td>
-                                    <td className="p-3 text-center">{r.oralCare ? "Done" : ""}</td>
-                                    <td className="p-3 text-center">{new Date(r.timestamp).toLocaleDateString()}</td>
+                                    <td className="p-3 text-center">{r.sponge ? "Sponged" : "-"}</td>
+                                    <td className="p-3 text-center">{r.shower ? "Showered" : "-"}</td>
+                                    <td className="p-3 text-center">{r.hairWash ? "Hair Washed" : "-"}</td>
+                                    <td className="p-3 text-center">{r.oralCare ? "Oral Cared" : "-"}</td>
+                                    <td className="p-3 text-center">{r.date}</td>
                                     <td className="p-4">
                                         <div className="flex gap-3 justify-center">
                                             <Link

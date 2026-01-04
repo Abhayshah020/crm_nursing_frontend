@@ -11,44 +11,52 @@ import { useEffect, useMemo, useState } from "react"
 import { useToast } from "@/components/toast/ToastContext"
 import { useRouter } from "next/navigation";
 
+export const formattedDate = () => {
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth() + 1;
+    const dayOfMonth = currentDate.getDate();
+    const dayOfWeek = currentDate.getDay();
+    const hours = currentDate.getHours();
+    const minutes = currentDate.getMinutes();
+    const seconds = currentDate.getSeconds();
+
+
+    const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    const dayName = days[dayOfWeek];
+
+    const offsetMinutes = currentDate.getTimezoneOffset();
+    const offsetHours = Math.floor(Math.abs(offsetMinutes) / 60);
+    const offsetMins = Math.abs(offsetMinutes) % 60;
+    const offsetSign = offsetMinutes > 0 ? '-' : '+';
+    const formattedOffset = `${offsetSign}${offsetHours.toString().padStart(2, '0')}:${offsetMins.toString().padStart(2, '0')}`;
+
+    const formattedDate = `${dayName}, ${month}/${dayOfMonth}/${year} ${hours}:${minutes}:${seconds} UTC${formattedOffset}`;
+
+    return formattedDate;
+}
+
 export default function CreateDailyNotePage() {
     const { showToast } = useToast();
     const router = useRouter();
 
-    const formattedDate = useMemo(() => {
-        const currentDate = new Date();
-        const year = currentDate.getFullYear();
-        const month = currentDate.getMonth() + 1;
-        const dayOfMonth = currentDate.getDate();
-        const dayOfWeek = currentDate.getDay();
-        const hours = currentDate.getHours();
-        const minutes = currentDate.getMinutes();
-        const seconds = currentDate.getSeconds();
-
-
-        const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-        const dayName = days[dayOfWeek];
-
-        const offsetMinutes = currentDate.getTimezoneOffset();
-        const offsetHours = Math.floor(Math.abs(offsetMinutes) / 60);
-        const offsetMins = Math.abs(offsetMinutes) % 60;
-        const offsetSign = offsetMinutes > 0 ? '-' : '+';
-        const formattedOffset = `${offsetSign}${offsetHours.toString().padStart(2, '0')}:${offsetMins.toString().padStart(2, '0')}`;
-
-        const formattedDate = `${dayName}, ${month}/${dayOfMonth}/${year} ${hours}:${minutes}:${seconds} UTC${formattedOffset}`;
-
-        return formattedDate;
-    }, [])
-
     const [formData, setFormData] = useState({
         patientId: "",
         patientName: "",
-        date: "",
-        timeStamps: formattedDate || '',
         notes: "",
+        timestamp: '',
+        date: "",
         time: "",
     })
     const [patients, setPatients] = useState([]);
+
+    useMemo(() => {
+        const data = formattedDate()
+        setFormData((prev) => ({
+            ...prev,
+            timestamp: data,
+        }))
+    }, []);
 
     const fetchPatients = async () => {
         try {
@@ -98,7 +106,7 @@ export default function CreateDailyNotePage() {
                     message: "Daily note saved successfully",
                     type: "success",
                 });
-                setFormData({ patientId: "", patientName: "", timeStamps: "", notes: "", date: "", time: "" });
+                setFormData({ patientId: "", patientName: "", timestamp: "", notes: "", date: "", time: "" });
                 router.push("/daily-notes");
             } else {
                 showToast({
@@ -191,8 +199,8 @@ export default function CreateDailyNotePage() {
                         <label className="block text-sm font-medium text-foreground">Time Stamps</label>
                         <input
                             type="text"
-                            name="timeStamps"
-                            defaultValue={formData.timeStamps}
+                            name="timestamp"
+                            defaultValue={formData.timestamp}
                             // onChange={handleChange}
                             readOnly
                             required
@@ -200,13 +208,8 @@ export default function CreateDailyNotePage() {
                         />
                     </div>
 
-                    <button
-                        type="submit"
-                        className="flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-xl hover:bg-primary/90 transition-all shadow-md hover:shadow-lg font-medium group"
-                    >
-                        <Save size={18} className="group-hover:scale-110 transition-transform" />
-                        Save Note
-                        <Sparkles size={14} className="ml-1 opacity-70" />
+                    <button type="submit" className="flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-xl">
+                        <Save size={18} /> Save Record <Sparkles size={14} />
                     </button>
                 </form>
             </PageContainer>

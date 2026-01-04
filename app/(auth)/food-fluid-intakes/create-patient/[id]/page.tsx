@@ -1,13 +1,13 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import PageContainer from "@/components/PageContainer"; // adjust path
 import { Save, Sparkles } from "lucide-react";
 import axiosClient from "@/lib/axiosClient";
 import Footer from "@/components/Footer";
 import { NavBarOfInternalPage } from "@/components/NavBarOfInternalPage";
 import { useToast } from "@/components/toast/ToastContext";
-import { useRouter } from "next/router";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
+import { formattedDate } from "@/app/(auth)/daily-notes/create/page";
 
 export default function CreateFoodFluidIntake() {
     const [formData, setFormData] = useState({
@@ -18,11 +18,22 @@ export default function CreateFoodFluidIntake() {
         totalFluid: "",
         fluidDetails: "",
         comments: "",
+        timestamp: '',
+        date: "",
+        time: "",
     });
     const { id } = useParams<{ id: string }>();
 
     const { showToast } = useToast();
     const router = useRouter();
+
+    useMemo(() => {
+        const data = formattedDate()
+        setFormData((prev) => ({
+            ...prev,
+            timestamp: data,
+        }))
+    }, []);
 
     useEffect(() => {
         fetchPatients();
@@ -50,6 +61,14 @@ export default function CreateFoodFluidIntake() {
     const handleSubmit = async (e: React.FormEvent) => {
         try {
             e.preventDefault();
+            if (formData.date === "" || formData.time === "" || formData.patientName === "") {
+                showToast({
+                    message: "Please fill the data for patient name, date and time.",
+                    type: "error",
+                });
+                return;
+            }
+
             const parsed = JSON.parse(sessionStorage.getItem("user"));
             const createdBy = parsed?.name || "Unknown Staff"
             const createdById = parsed?.id || 0
@@ -68,8 +87,11 @@ export default function CreateFoodFluidIntake() {
                     totalFluid: "",
                     fluidDetails: "",
                     comments: "",
+                    timestamp: '',
+                    date: "",
+                    time: "",
                 });
-                router.push("/food-fluid-intakes"); // redirect to table page
+                router.push(`/food-fluid-intakes/patients-all-notes/${id}`); // redirect to table page
             } else {
                 showToast({
                     message: "Something went wrong!",
@@ -115,24 +137,6 @@ export default function CreateFoodFluidIntake() {
 
                     {/* Patient Info */}
                     <div className="grid sm:grid-cols-2 gap-5">
-                        {/* <div className="space-y-2">
-                            <label className="text-sm font-medium text-foreground">
-                                Patient ID
-                            </label>
-                            <input
-                                name="patientId"
-                                value={formData.patientId}
-                                onChange={handleChange}
-                                className="
-          w-full rounded-xl
-          bg-background border border-border
-          px-4 py-3
-          text-foreground
-          focus:ring-2 focus:ring-primary/50
-          outline-none transition
-        "
-                            />
-                        </div> */}
 
                         <div className="space-y-2">
                             <label className="text-sm font-medium text-foreground">
@@ -148,7 +152,32 @@ export default function CreateFoodFluidIntake() {
                         </div>
                     </div>
 
-                    {/* Intake */}
+                    <div className="flex gap-4 items-center flex-wrap">
+                        <div className="space-y-2 flex-1">
+                            <label className="block text-sm font-medium text-foreground">Date</label>
+                            <input
+                                type="date"
+                                name="date"
+                                defaultValue={formData.date}
+                                onChange={handleChange}
+                                required
+                                className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                            />
+                        </div>
+
+                        <div className="space-y-2 flex-1">
+                            <label className="block text-sm font-medium text-foreground">Times</label>
+                            <input
+                                type="time"
+                                name="time"
+                                defaultValue={formData.time}
+                                onChange={handleChange}
+                                required
+                                className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                            />
+                        </div>
+                    </div>
+
                     <div className="space-y-4">
                         <h3 className="text-sm font-semibold text-foreground">
                             Intake Details
@@ -266,26 +295,9 @@ export default function CreateFoodFluidIntake() {
                     {/* Staff */}
 
                     {/* Action */}
-                    <div className="flex justify-end pt-4">
-                        <button
-                            type="submit"
-                            className="
-        inline-flex items-center gap-2
-        bg-primary text-primary-foreground
-        px-6 py-3 rounded-xl
-        font-medium
-        shadow-md hover:shadow-lg
-        hover:bg-primary/90
-        active:scale-[0.98]
-        transition-all
-        group
-      "
-                        >
-                            <Save size={18} className="group-hover:scale-110 transition-transform" />
-                            Save Intake
-                            <Sparkles size={14} className="ml-1 opacity-70" />
-                        </button>
-                    </div>
+                    <button type="submit" className="flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-xl">
+                        <Save size={18} /> Save Record <Sparkles size={14} />
+                    </button>
                 </form>
 
             </PageContainer>

@@ -35,7 +35,8 @@ export default function PatientsTablePage() {
                 },
             });
             setRecords(res.data.data);
-            setTotalPages(res.data.total);
+            setTotalPages(res.data.page);
+
         } catch (error) {
             showToast({
                 message: "Something went wrong!",

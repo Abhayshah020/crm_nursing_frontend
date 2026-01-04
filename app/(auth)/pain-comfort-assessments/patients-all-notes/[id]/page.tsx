@@ -36,7 +36,8 @@ export default function PainComfortAssessmentListPage() {
                     },
                 });
                 setRecords(res.data.data);
-                setTotalPages(res.data.total);
+                setTotalPages(res.data.page);
+
             } catch (err) {
                 console.error(err);
             }
@@ -84,7 +85,7 @@ export default function PainComfortAssessmentListPage() {
                                     </td>
 
                                     <td className="p-4 text-center text-muted-foreground">
-                                        {new Date(a.timestamp).toLocaleDateString()}
+                                        {a.date}
                                     </td>
 
                                     <td className="p-4">

@@ -29,8 +29,16 @@ export default function SkinCirculationList() {
 
     const fetchRecords = async () => {
         try {
-            const res = await axiosClient.get(`/skin-circulations?page=${page}&limit=10`);
-            if (res.status === 200) setRecords(res.data.data);
+            const res = await axiosClient.get(`/skin-circulations`, {
+                params: {
+                    page: currentPage,
+                    limit: itemsPerPage,
+                },
+            });
+            if (res.status === 200) {
+                setTotalPages(res.data.page);
+                setRecords(res.data.data);
+            }
         } catch (err) {
             console.error(err);
         }
@@ -103,7 +111,7 @@ export default function SkinCirculationList() {
                                     <td className="p-3 text-center">{r.skinColour}</td>
                                     <td className="p-3 text-center">{r.skinTemperature}</td>
                                     <td className="p-3 text-center">{r.capillaryRefill}</td>
-                                    <td className="p-3 text-center">{new Date(r.timestamp).toLocaleDateString()}</td>
+                                    <td className="p-3 text-center">{r.date}</td>
                                     <td className="p-3 text-center">
                                         <div className="flex gap-3">
 

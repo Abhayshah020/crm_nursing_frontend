@@ -36,7 +36,8 @@ export default function BowelChartTable() {
                     },
                 });
                 setRecords(res.data.data);
-                setTotalPages(res.data.total);
+                setTotalPages(res.data.page);
+
             } catch (err) {
                 showToast({
                     message: "Error creating bowel chart",
@@ -45,7 +46,7 @@ export default function BowelChartTable() {
             }
         };
         fetchRecords();
-    }, [currentPage, itemsPerPage])
+    }, [currentPage])
 
     return (
         <div className="flex flex-col min-h-screen bg-slate-50">
@@ -76,7 +77,7 @@ export default function BowelChartTable() {
                                     </td>
                                     <td className="p-3 text-center">{r.bowelMotion ? "Yes" : "No"}</td>
                                     <td className="p-3 text-center">{r.bristolType}</td>
-                                    <td className="p-3 text-center">{new Date(r.timestamp).toLocaleDateString()}</td>
+                                    <td className="p-3 text-center">{r.date}</td>
                                     <td className="p-3 text-center">
                                         <div className="flex gap-3 justify-center">
                                             <Link
