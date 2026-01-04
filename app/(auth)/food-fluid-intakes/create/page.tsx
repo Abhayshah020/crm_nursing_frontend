@@ -9,8 +9,6 @@ import { useEffect, useMemo, useState } from "react";
 import { formattedDate } from "../../daily-notes/create/page";
 
 export default function CreateFoodFluidIntake() {
-
-
     const [formData, setFormData] = useState({
         patientId: "",
         patientName: "",
@@ -46,6 +44,37 @@ export default function CreateFoodFluidIntake() {
             if (res.status === 200) setPatients(res.data.data);
         } catch (err) {
             console.error("Error fetching patients:", err);
+        }
+    };
+
+    const fetchOnePatientsAllData = async ({ id }) => {
+        if (!id) return;
+
+        try {
+            const res = await axiosClient.get("/food-fluid-intakes", {
+                params: {
+                    patientId: id,
+                },
+            });
+
+            const data = res.data.data || [];
+
+            // ✅ Sum all inputFluidsMl safely
+            const totalFluidMl = data.reduce((sum, item) => {
+                const value = parseFloat(item.inputFluidsMl);
+                return sum + (isNaN(value) ? 0 : value);
+            }, 0);
+
+            setFormData((prev) => ({
+                ...prev,
+                totalFluid: totalFluidMl.toString(), // keep as string if your form expects string
+            }));
+
+        } catch (err) {
+            showToast({
+                message: "Something went wrong!",
+                type: "error",
+            });
         }
     };
 
@@ -112,14 +141,14 @@ export default function CreateFoodFluidIntake() {
                 <form
                     onSubmit={handleSubmit}
                     className="
-    bg-card/95 backdrop-blur
-    rounded-2xl
-    shadow-lg hover:shadow-xl
-    border border-border
-    p-6 sm:p-8
-    space-y-8
-    transition-all
-  "
+                        bg-card/95 backdrop-blur
+                        rounded-2xl
+                        shadow-lg hover:shadow-xl
+                        border border-border
+                        p-6 sm:p-8
+                        space-y-8
+                        transition-all
+                    "
                 >
                     {/* Header */}
                     <div className="space-y-1">
@@ -150,6 +179,7 @@ export default function CreateFoodFluidIntake() {
                                         patientName: select.value,
                                         patientId: selectedPatient ? selectedPatient.id : "",
                                     });
+                                    fetchOnePatientsAllData({ id: selectedPatient.id })
                                 }}
                                 className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:ring-2 focus:ring-primary outline-none transition-all"
                             >
@@ -200,17 +230,21 @@ export default function CreateFoodFluidIntake() {
                                 </label>
                                 <input
                                     name="inputFluidsMl"
-                                    type="number"
+                                    type="text"
+                                    inputMode="numeric"
+                                    pattern="[0-9]*"
                                     value={formData.inputFluidsMl}
                                     onChange={handleChange}
                                     className="
-            w-full rounded-xl
-            bg-background border border-border
-            px-4 py-3
-            focus:ring-2 focus:ring-primary/50
-            outline-none transition
-          "
+                                        w-full rounded-xl
+                                        bg-background border border-border
+                                        px-4 py-3
+                                        focus:ring-2 focus:ring-primary/50
+                                        outline-none transition
+                                    "
                                 />
+
+
                             </div>
 
                             <div className="space-y-2">
@@ -220,15 +254,15 @@ export default function CreateFoodFluidIntake() {
                                 <input
                                     name="totalFluid"
                                     type="number"
-                                    value={formData.totalFluid}
-                                    onChange={handleChange}
+                                    defaultValue={formData.totalFluid}
+                                    // onChange={handleChange}
                                     className="
-            w-full rounded-xl
-            bg-background border border-border
-            px-4 py-3
-            focus:ring-2 focus:ring-primary/50
-            outline-none transition
-          "
+                                        w-full rounded-xl
+                                        bg-background border border-border
+                                        px-4 py-3
+                                        focus:ring-2 focus:ring-primary/50
+                                        outline-none transition
+                                    "
                                 />
                             </div>
                         </div>
@@ -247,14 +281,14 @@ export default function CreateFoodFluidIntake() {
                                 onChange={handleChange}
                                 placeholder="Meals, consistency, appetite…"
                                 className="
-          w-full rounded-xl
-          bg-background border border-border
-          px-4 py-3
-          text-foreground
-          placeholder:text-muted-foreground
-          focus:ring-2 focus:ring-primary/50
-          outline-none transition resize-none
-        "
+                                    w-full rounded-xl
+                                    bg-background border border-border
+                                    px-4 py-3
+                                    text-foreground
+                                    placeholder:text-muted-foreground
+                                    focus:ring-2 focus:ring-primary/50
+                                    outline-none transition resize-none
+                                "
                             />
                         </div>
 
@@ -269,14 +303,14 @@ export default function CreateFoodFluidIntake() {
                                 onChange={handleChange}
                                 placeholder="Water, juice, supplements, IV fluids…"
                                 className="
-          w-full rounded-xl
-          bg-background border border-border
-          px-4 py-3
-          text-foreground
-          placeholder:text-muted-foreground
-          focus:ring-2 focus:ring-primary/50
-          outline-none transition resize-none
-        "
+                                    w-full rounded-xl
+                                    bg-background border border-border
+                                    px-4 py-3
+                                    text-foreground
+                                    placeholder:text-muted-foreground
+                                    focus:ring-2 focus:ring-primary/50
+                                    outline-none transition resize-none
+                                "
                             />
                         </div>
                     </div>
@@ -292,13 +326,13 @@ export default function CreateFoodFluidIntake() {
                             value={formData.comments}
                             onChange={handleChange}
                             className="
-        w-full rounded-xl
-        bg-background border border-border
-        px-4 py-3
-        text-foreground
-        focus:ring-2 focus:ring-primary/50
-        outline-none transition resize-none
-      "
+                                w-full rounded-xl
+                                bg-background border border-border
+                                px-4 py-3
+                                text-foreground
+                                focus:ring-2 focus:ring-primary/50
+                                outline-none transition resize-none
+                            "
                         />
                     </div>
 

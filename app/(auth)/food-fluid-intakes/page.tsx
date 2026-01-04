@@ -97,10 +97,10 @@ export default function FoodFluidIntakeList() {
                         <thead className="bg-muted/50 text-foreground border-b border-border">
                             <tr>
                                 <th className="p-4 text-left font-semibold">Patient</th>
-                                <th className="p-4 font-semibold">Input Fluids (ml)</th>
-                                <th className="p-4 font-semibold">Food Description</th>
-                                <th className="p-4 font-semibold">Total Fluid</th>
-                                <th className="p-4 font-semibold">Date</th>
+                                <th className="p-4 text-left font-semibold">Input Fluids (ml)</th>
+                                <th className="p-4 text-left font-semibold">Food Description</th>
+                                <th className="p-4 text-left font-semibold">Total Fluid</th>
+                                <th className="p-4 text-left font-semibold">Date</th>
                                 <th className="p-4 font-semibold">Actions</th>
 
                             </tr>
@@ -108,13 +108,13 @@ export default function FoodFluidIntakeList() {
                         <tbody>
                             {intakes.map(i => (
                                 <tr key={i.id} className="border-b border-border hover:bg-muted/30 transition-colors">
-                                    <td className="p-4 font-medium text-foreground">
+                                    <td className="p-4 font-medium text-foreground text-left">
                                         {i.patientName}
                                     </td>
-                                    <td className="p-4 text-center">{i.inputFluidsMl}</td>
-                                    <td className="p-4">{i.foodDescription.slice(0, 50)}...</td>
-                                    <td className="p-4 text-center">{i.totalFluid}</td>
-                                    <td className="p-4 text-center">{i.date}</td>
+                                    <td className="p-4 text-left">{i.inputFluidsMl}</td>
+                                    <td className="p-4 text-left">{i.foodDescription.slice(0, 50)}...</td>
+                                    <td className="p-4 text-left">{i.totalFluid}</td>
+                                    <td className="p-4 text-left">{i.date}</td>
                                     <td className="p-4">
                                         <div className="flex gap-3 justify-center">
                                             <Link

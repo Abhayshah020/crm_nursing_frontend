@@ -1,12 +1,11 @@
 "use client";
-import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
-import PageContainer from "@/components/PageContainer";
-import { Clock, User } from "lucide-react";
-import axiosClient from "@/lib/axiosClient";
 import { NavBarOfInternalPage } from "@/components/NavBarOfInternalPage";
-import Footer from "@/components/Footer";
+import PageContainer from "@/components/PageContainer";
 import { useToast } from "@/components/toast/ToastContext";
+import axiosClient from "@/lib/axiosClient";
+import { Clock, User } from "lucide-react";
+import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function FoodFluidIntakeView() {
     const { id } = useParams();
@@ -41,7 +40,7 @@ export default function FoodFluidIntakeView() {
             <NavBarOfInternalPage mainPage={true} linkCreate="/food-fluid-intakes/create" title="Food & Fluid Intake" subtitle="Manage and review all food & fluid intake records" />
 
             <PageContainer title="Intake Details" subtitle="Patient food & fluid record">
-                <div className="bg-card rounded-2xl shadow-lg border p-6 space-y-4 max-w-5xl hover:shadow-xl transition-shadow">
+                <div className="bg-card rounded-2xl shadow-lg border p-6 space-y-4 hover:shadow-xl transition-shadow">
                     <div className="flex gap-3 bg-muted/30 p-4 rounded-xl">
                         <User className="text-primary" />
                         <div>
