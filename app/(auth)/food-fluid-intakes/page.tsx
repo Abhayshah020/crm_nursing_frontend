@@ -8,6 +8,7 @@ import { NavBarOfInternalPage } from "@/components/NavBarOfInternalPage";
 import { ChevronLeft, ChevronRight, Eye, Trash } from "lucide-react";
 import { useToast } from "@/components/toast/ToastContext";
 import ConfirmModal from "@/components/ConfirmModal";
+import { Pagination } from "@/components/Pagination";
 
 export default function FoodFluidIntakeList() {
     const [intakes, setIntakes] = useState<any[]>([]);
@@ -49,7 +50,7 @@ export default function FoodFluidIntakeList() {
 
     useEffect(() => {
         fetchRecords()
-    }, [currentPage]);
+    }, [currentPage, itemsPerPage]);
 
     useEffect(() => {
         if (typeof window === "undefined") return;
@@ -144,25 +145,8 @@ export default function FoodFluidIntakeList() {
                         </tbody>
                     </table>
                 </div>
-                {totalPages > 1 && (
-                    <div className="mt-4 flex justify-end gap-2">
-                        <button
-                            onClick={handlePrevPage}
-                            disabled={currentPage === 1}
-                            className="p-2 border rounded disabled:opacity-50"
-                        >
-                            <ChevronLeft />
-                        </button>
-                        <span className="p-2">{currentPage}</span>
-                        <button
-                            onClick={handleNextPage}
-                            disabled={currentPage === totalPages}
-                            className="p-2 border rounded disabled:opacity-50"
-                        >
-                            <ChevronRight />
-                        </button>
-                    </div>
-                )}
+                <Pagination totalPages={totalPages} handlePrevPage={handlePrevPage} handleNextPage={handleNextPage} currentPage={currentPage} itemsPerPage={itemsPerPage} onItemsPerPageChange={(size) => { setItemsPerPage(size); setCurrentPage(1) }} />
+
             </PageContainer>
         </div>
     );

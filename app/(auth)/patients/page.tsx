@@ -3,6 +3,7 @@
 import ConfirmModal from "@/components/ConfirmModal";
 import { NavBarOfInternalPage } from "@/components/NavBarOfInternalPage";
 import PageContainer from "@/components/PageContainer";
+import { Pagination } from "@/components/Pagination";
 import { useToast } from "@/components/toast/ToastContext";
 import axiosClient from "@/lib/axiosClient";
 import { ChevronLeft, ChevronRight, Eye, Trash } from "lucide-react";
@@ -151,25 +152,8 @@ export default function PatientsTablePage() {
                 </div>
 
 
-                {totalPages > 1 && (
-                    <div className="mt-4 flex justify-end gap-2">
-                        <button
-                            onClick={handlePrevPage}
-                            disabled={currentPage === 1}
-                            className="p-2 border rounded disabled:opacity-50"
-                        >
-                            <ChevronLeft />
-                        </button>
-                        <span className="p-2">{currentPage}</span>
-                        <button
-                            onClick={handleNextPage}
-                            disabled={currentPage === totalPages}
-                            className="p-2 border rounded disabled:opacity-50"
-                        >
-                            <ChevronRight />
-                        </button>
-                    </div>
-                )}
+                <Pagination totalPages={totalPages} handlePrevPage={handlePrevPage} handleNextPage={handleNextPage} currentPage={currentPage} itemsPerPage={itemsPerPage} onItemsPerPageChange={(size) => { setItemsPerPage(size); setCurrentPage(1) }} />
+
             </PageContainer>
 
 
