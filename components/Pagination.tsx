@@ -8,7 +8,6 @@ export const Pagination = ({
     handleNextPage,
     onItemsPerPageChange,
 }) => {
-    if (totalPages <= 1) return null
 
     const itemsPerPageOptions = [5, 10, 20, 50, 100]
     return (
@@ -30,30 +29,32 @@ export const Pagination = ({
             </div>
 
             {/* Pagination controls */}
-            <div className="flex items-center gap-3">
-                <span className="text-sm text-gray-600">
-                    Page <span className="font-medium">{currentPage}</span> of{" "}
-                    <span className="font-medium">{totalPages}</span>
-                </span>
+            {totalPages > 1 && (
+                <div className="flex items-center gap-3">
+                    <span className="text-sm text-gray-600">
+                        Page <span className="font-medium">{currentPage}</span> of{" "}
+                        <span className="font-medium">{totalPages}</span>
+                    </span>
 
-                <div className="flex items-center gap-1">
-                    <button
-                        onClick={() => handlePrevPage(currentPage - 1)}
-                        disabled={currentPage === 1}
-                        className="flex h-9 w-9 items-center justify-center rounded-md border bg-white text-gray-600 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                        <ChevronLeft size={18} />
-                    </button>
+                    <div className="flex items-center gap-1">
+                        <button
+                            onClick={() => handlePrevPage(currentPage - 1)}
+                            disabled={currentPage === 1}
+                            className="flex h-9 w-9 items-center justify-center rounded-md border bg-white text-gray-600 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                            <ChevronLeft size={18} />
+                        </button>
 
-                    <button
-                        onClick={() => handleNextPage(currentPage + 1)}
-                        disabled={currentPage === totalPages}
-                        className="flex h-9 w-9 items-center justify-center rounded-md border bg-white text-gray-600 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                        <ChevronRight size={18} />
-                    </button>
+                        <button
+                            onClick={() => handleNextPage(currentPage + 1)}
+                            disabled={currentPage === totalPages}
+                            className="flex h-9 w-9 items-center justify-center rounded-md border bg-white text-gray-600 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                            <ChevronRight size={18} />
+                        </button>
+                    </div>
                 </div>
-            </div>
+            )}
         </div>
     )
 }
