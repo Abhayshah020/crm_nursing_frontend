@@ -6,6 +6,7 @@ import PageContainer from "@/components/PageContainer"
 import { Pagination } from "@/components/Pagination"
 import { useToast } from "@/components/toast/ToastContext"
 import axiosClient from "@/lib/axiosClient"
+import { generateDailyNotesPdf } from "@/utils/generateDailyNotesPdf"
 import { ChevronLeft, ChevronRight, Eye, Trash } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
@@ -82,6 +83,13 @@ export default function DailyNotesTablePage() {
             showToast({ message: "Error deleting user!", type: "error" });
         }
     };
+
+    const handleDownload = () => {
+        if (notes.length == 0) return;
+        generateDailyNotesPdf(notes);
+    };
+
+
     return (
         <div className="flex flex-col min-h-screen">
             <NavBarOfInternalPage mainPage={true} linkCreate="/daily-notes/create" title="Daily Notes" subtitle="Manage and review all daily notes" />
@@ -97,7 +105,14 @@ export default function DailyNotesTablePage() {
             <PageContainer title="Daily Notes" subtitle="Manage and review documentation">
 
                 <div className="bg-card rounded-2xl shadow-lg border p-6 max-w-7xl overflow-x-auto">
-
+                    <div className="w-full flex justify-end">
+                        <button
+                            onClick={handleDownload}
+                            className="px-4 py-2 cursor-pointer bg-blue-600 mb-2 text-white rounded"
+                        >
+                            Download Report
+                        </button>
+                    </div>
                     <table className="w-full text-sm">
                         <thead className="bg-muted/50 text-foreground border-b border-border">
                             <tr>
